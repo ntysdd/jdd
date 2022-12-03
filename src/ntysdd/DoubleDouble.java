@@ -62,6 +62,27 @@ public final strictfp class DoubleDouble {
         return new DoubleDouble(f, s);
     }
 
+
+    /**
+     * 相反数
+     */
+    public DoubleDouble neg() {
+        double first = this.first;
+        double second = this.second;
+        if (first == 0) {
+            return new DoubleDouble(-first, 0.0);
+        }
+        return new DoubleDouble(-first, -second);
+    }
+
+    /**
+     * 计算两个DoubleDouble的差，返回DoubleDouble
+     */
+    public DoubleDouble sub(DoubleDouble rhs) {
+        return this.add(rhs.neg());
+    }
+
+
     private static class Pair {
         final double v1;
         final double v2;
