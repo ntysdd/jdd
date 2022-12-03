@@ -165,6 +165,12 @@ public final strictfp class DoubleDouble {
             this.first = Double.NaN;
             this.second = Double.NaN;
         } else {
+            if (first != 0 && second == 0) {
+                // -0.0导致的问题太多，特殊处理一下
+                this.first = first;
+                this.second = 0;
+                return;
+            }
             this.first = first;
             this.second = second;
         }
