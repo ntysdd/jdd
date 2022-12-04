@@ -1,5 +1,7 @@
 package ntysdd;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -27,14 +29,21 @@ public final strictfp class DoubleDouble {
     // 用来缓存String表示
     private String toStringCache;
 
-    private static final Method FMA_METHOD;
+    private static final MethodHandle FMA_METHOD;
     static {
         Method fma = null;
         try {
             fma = Math.class.getMethod("fma", double.class, double.class, double.class);
         } catch (NoSuchMethodException ignore) {
         }
-        FMA_METHOD = fma;
+        MethodHandle fmaHandle = null;
+        if (fma != null) {
+            try {
+                fmaHandle = MethodHandles.publicLookup().unreflect(fma);
+            } catch (IllegalAccessException ignore) {
+            }
+        }
+        FMA_METHOD = fmaHandle;
     }
 
     /**
@@ -168,8 +177,8 @@ public final strictfp class DoubleDouble {
         if (FMA_METHOD != null) {
             double r2;
             try {
-                r2 = (Double) FMA_METHOD.invoke(null, lhs, rhs, -r1);
-            } catch (IllegalAccessException | InvocationTargetException e) {
+                r2 = (double) FMA_METHOD.invokeExact(lhs, rhs, -r1);
+            } catch (Throwable e) {
                 throw new AssertionError(e);
             }
             return new DoubleDouble(r1, r2);
