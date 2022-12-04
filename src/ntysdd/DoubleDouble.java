@@ -57,7 +57,7 @@ public final strictfp class DoubleDouble {
      * 将long转为DoubleDouble
      */
     public static DoubleDouble valueOf(long x) {
-        if (Math.abs(x) <= (long) Math.pow(2, 53)) {
+        if (canLongBeConvertedToDoubleExactly(x)) {
             return valueOf((double) x);
         }
         int part1 = ((int) x & 0x7fffffff);
@@ -401,34 +401,24 @@ public final strictfp class DoubleDouble {
     }
 
     public DoubleDouble add(long rhs) {
-        if (Math.abs(rhs) <= (long) Math.pow(2, 53)) {
+        if (canLongBeConvertedToDoubleExactly(rhs)) {
             return this.add((double) rhs);
         }
         DoubleDouble rhs2 = DoubleDouble.valueOf(rhs);
-        if (rhs2.second == 0) {
-            return this.add(rhs2.first);
-        }
         return this.add(rhs2);
     }
 
     public DoubleDouble sub(long rhs) {
-        if (Math.abs(rhs) <= (long) Math.pow(2, 53)) {
+        if (canLongBeConvertedToDoubleExactly(rhs)) {
             return this.sub((double) rhs);
         }
         DoubleDouble rhs2 = DoubleDouble.valueOf(rhs);
-        if (rhs2.second == 0) {
-            return this.sub(rhs2.first);
-        }
         return this.sub(rhs2);
     }
 
     public DoubleDouble mul(long rhs) {
-        if (Math.abs(rhs) <= (long) Math.pow(2, 53)) {
+        if (canLongBeConvertedToDoubleExactly(rhs)) {
             return this.mul((double) rhs);
-        }
-        DoubleDouble rhs2 = DoubleDouble.valueOf(rhs);
-        if (rhs2.second == 0) {
-            return this.mul(rhs2.first);
         }
         // DoubleDouble和DoubleDouble的乘法还没有实现
         // 先用BigDecimal来处理
@@ -443,12 +433,8 @@ public final strictfp class DoubleDouble {
     }
 
     public DoubleDouble div(long rhs) {
-        if (Math.abs(rhs) <= (long) Math.pow(2, 53)) {
+        if (canLongBeConvertedToDoubleExactly(rhs)) {
             return this.div((double) rhs);
-        }
-        DoubleDouble rhs2 = DoubleDouble.valueOf(rhs);
-        if (rhs2.second == 0) {
-            return this.div(rhs2.first);
         }
         // DoubleDouble和DoubleDouble的除法还没有实现
         // 先用BigDecimal来处理
@@ -463,9 +449,17 @@ public final strictfp class DoubleDouble {
     }
 
     public static DoubleDouble reciprocal(long value) {
-        if (Math.abs(value) <= (long) Math.pow(2, 53)) {
+        if (canLongBeConvertedToDoubleExactly(value)) {
             return DoubleDouble.reciprocal((double) value);
         }
         return DoubleDouble.valueOf(1).div(value);
+    }
+
+    private static final long POW_2_53 = (long) StrictMath.pow(2, 53);
+    private static boolean canLongBeConvertedToDoubleExactly(long x) {
+        if (-POW_2_53 <= x && x <= POW_2_53) {
+            return true;
+        }
+        return (long) (double) x == x;
     }
 }
