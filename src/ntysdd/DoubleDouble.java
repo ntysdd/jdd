@@ -481,6 +481,11 @@ public final strictfp class DoubleDouble {
         if (-POW_2_53 <= x && x <= POW_2_53) {
             return true;
         }
-        return (long) (double) x == x;
+        long v = (long) (double) x;
+        if (v == Long.MAX_VALUE || v == Long.MIN_VALUE) {
+            // 发生溢出
+            return false;
+        }
+        return v == x;
     }
 }
