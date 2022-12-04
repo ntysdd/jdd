@@ -62,7 +62,7 @@ public final strictfp class DoubleDouble {
         }
         int part1 = ((int) x & 0x7fffffff);
         long part2 = x - part1;
-        return valueOf((double) part1).add(valueOf((double) part2));
+        return add((double) part1, (double) part2);
     }
 
     private DoubleDouble(double v) {
