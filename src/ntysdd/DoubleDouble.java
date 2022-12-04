@@ -305,7 +305,7 @@ public final strictfp class DoubleDouble {
             return new DoubleDouble(r, 0);
         }
 
-        return new DoubleDouble(1.0, 0).div(value);
+        return DoubleDouble.ONE.div(value);
     }
 
     private DoubleDouble(double first, double second) {
