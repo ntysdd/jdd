@@ -2,6 +2,7 @@ package ntysdd;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Objects;
 
 /**
@@ -348,5 +349,67 @@ public final strictfp class DoubleDouble {
     @Override
     public int hashCode() {
         return Objects.hash(first, second);
+    }
+
+    public DoubleDouble add(long rhs) {
+        if (rhs < (long) Math.pow(2, 53)) {
+            return this.add((double) rhs);
+        }
+        DoubleDouble rhs2 = DoubleDouble.valueOf(rhs);
+        if (rhs2.second == 0) {
+            return this.add(rhs2.first);
+        }
+        return this.add(rhs2);
+    }
+
+    public DoubleDouble sub(long rhs) {
+        if (rhs < (long) Math.pow(2, 53)) {
+            return this.sub((double) rhs);
+        }
+        DoubleDouble rhs2 = DoubleDouble.valueOf(rhs);
+        if (rhs2.second == 0) {
+            return this.sub(rhs2.first);
+        }
+        return this.sub(rhs2);
+    }
+
+    public DoubleDouble mul(long rhs) {
+        if (rhs < (long) Math.pow(2, 53)) {
+            return this.mul((double) rhs);
+        }
+        DoubleDouble rhs2 = DoubleDouble.valueOf(rhs);
+        if (rhs2.second == 0) {
+            return this.mul(rhs2.first);
+        }
+        // DoubleDouble和DoubleDouble的乘法还没有实现
+        // 先用BigDecimal来处理
+        BigDecimal bd = this.toBigDecimal();
+        bd = bd.multiply(BigDecimal.valueOf(rhs));
+        double f = bd.doubleValue();
+        double s = bd.subtract(new BigDecimal(f)).doubleValue();
+        if (f == 0) {
+            return this.mul(Math.copySign(0, rhs));
+        }
+        return new DoubleDouble(f, s);
+    }
+
+    public DoubleDouble div(long rhs) {
+        if (rhs < (long) Math.pow(2, 53)) {
+            return this.div((double) rhs);
+        }
+        DoubleDouble rhs2 = DoubleDouble.valueOf(rhs);
+        if (rhs2.second == 0) {
+            return this.div(rhs2.first);
+        }
+        // DoubleDouble和DoubleDouble的除法还没有实现
+        // 先用BigDecimal来处理
+        BigDecimal bd = this.toBigDecimal();
+        bd = bd.divide(BigDecimal.valueOf(rhs), new MathContext(100, RoundingMode.HALF_EVEN));
+        double f = bd.doubleValue();
+        double s = bd.subtract(new BigDecimal(f)).doubleValue();
+        if (f == 0) {
+            return this.mul(Math.copySign(0, rhs));
+        }
+        return new DoubleDouble(f, s);
     }
 }
