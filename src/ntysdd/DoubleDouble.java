@@ -204,8 +204,14 @@ public final strictfp class DoubleDouble {
         if (shift == 0) {
             return new DoubleDouble(lhs * rhs, c);
         } else {
-            return new DoubleDouble(lhs * rhs * Math.pow(2, shift),
-                    c * Math.pow(2, shift));
+            double scale;
+            if (shift == 53) {
+                scale = (double) POW_2_53;
+            } else {
+                scale = StrictMath.pow(2, shift);
+            }
+            return new DoubleDouble(lhs * rhs * scale,
+                    c * scale);
         }
     }
 
