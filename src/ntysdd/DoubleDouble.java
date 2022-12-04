@@ -181,6 +181,7 @@ public final strictfp class DoubleDouble {
     public DoubleDouble mul(double rhs) {
         double first = this.first;
         if (first == 0 || rhs == 0) {
+            // 处理±0
             if (first == 0 && Math.copySign(1, rhs) > 0) {
                 return this;
             }
@@ -194,7 +195,16 @@ public final strictfp class DoubleDouble {
         }
         DoubleDouble r1 = mul(first, rhs);
         DoubleDouble r2 = mul(this.second, rhs);
-        return r1.add(r2);
+        DoubleDouble result = r1.add(r2);
+        if (result.first == 0) {
+            // 处理±0
+            double res = Math.copySign(0, this.first * rhs);
+            if (Double.doubleToRawLongBits(res) == Double.doubleToRawLongBits(first)) {
+                return this;
+            }
+            return DoubleDouble.valueOf(res);
+        }
+        return result;
     }
 
     /**
