@@ -412,4 +412,11 @@ public final strictfp class DoubleDouble {
         }
         return new DoubleDouble(f, s);
     }
+
+    public static DoubleDouble reciprocal(long value) {
+        if (value < (long) Math.pow(2, 53)) {
+            return DoubleDouble.reciprocal((double) value);
+        }
+        return DoubleDouble.valueOf(1).div(value);
+    }
 }
