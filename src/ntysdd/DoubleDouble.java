@@ -248,6 +248,13 @@ public final strictfp class DoubleDouble {
         if (toStringCache != null) {
             return toStringCache;
         }
+        if (first == 0 && second == 0) {
+            if (Math.copySign(1, first) < 0) {
+                return this.toStringCache = "-0";
+            } else {
+                return this.toStringCache = "0";
+            }
+        }
         if (Double.isNaN(first) || Double.isNaN(second)) {
             return this.toStringCache = Double.toString(Double.NaN);
         }
