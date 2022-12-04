@@ -154,6 +154,7 @@ public final strictfp class DoubleDouble {
     }
 
     private static final long POW_2_27 = (long) StrictMath.pow(2, 27);
+
     private static Pair split2(double v) {
         double c = POW_2_27 + 1;
         double vp = v * c;
@@ -164,6 +165,7 @@ public final strictfp class DoubleDouble {
 
     private static final double POW_2_970 = StrictMath.pow(2, 970);
     private static final double POW_2_minus_53 = StrictMath.pow(2, -53);
+
     /**
      * 计算两个double的积，结果表示为DoubleDouble
      */
@@ -188,6 +190,9 @@ public final strictfp class DoubleDouble {
                 throw new AssertionError(e);
             }
             return new DoubleDouble(r1, r2);
+        }
+        if (Double.isNaN(r1)) {
+            return new DoubleDouble(Double.NaN);
         }
         int shift = 0;
         if (Math.abs(lhs) >= POW_2_970) {
@@ -494,6 +499,7 @@ public final strictfp class DoubleDouble {
     }
 
     private static final long POW_2_53 = (long) StrictMath.pow(2, 53);
+
     private static boolean canLongBeConvertedToDoubleExactly(long x) {
         if (-POW_2_53 <= x && x <= POW_2_53) {
             return true;
