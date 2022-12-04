@@ -29,7 +29,7 @@ public final strictfp class DoubleDouble {
      * 将long转为DoubleDouble
      */
     public static DoubleDouble valueOf(long x) {
-        if (Math.abs(x) < (long) Math.pow(2, 53)) {
+        if (Math.abs(x) <= (long) Math.pow(2, 53)) {
             return valueOf((double) x);
         }
         int part1 = ((int) x & 0x7fffffff);
@@ -352,7 +352,7 @@ public final strictfp class DoubleDouble {
     }
 
     public DoubleDouble add(long rhs) {
-        if (rhs < (long) Math.pow(2, 53)) {
+        if (Math.abs(rhs) <= (long) Math.pow(2, 53)) {
             return this.add((double) rhs);
         }
         DoubleDouble rhs2 = DoubleDouble.valueOf(rhs);
@@ -363,7 +363,7 @@ public final strictfp class DoubleDouble {
     }
 
     public DoubleDouble sub(long rhs) {
-        if (rhs < (long) Math.pow(2, 53)) {
+        if (Math.abs(rhs) <= (long) Math.pow(2, 53)) {
             return this.sub((double) rhs);
         }
         DoubleDouble rhs2 = DoubleDouble.valueOf(rhs);
@@ -374,7 +374,7 @@ public final strictfp class DoubleDouble {
     }
 
     public DoubleDouble mul(long rhs) {
-        if (rhs < (long) Math.pow(2, 53)) {
+        if (Math.abs(rhs) <= (long) Math.pow(2, 53)) {
             return this.mul((double) rhs);
         }
         DoubleDouble rhs2 = DoubleDouble.valueOf(rhs);
@@ -394,7 +394,7 @@ public final strictfp class DoubleDouble {
     }
 
     public DoubleDouble div(long rhs) {
-        if (rhs < (long) Math.pow(2, 53)) {
+        if (Math.abs(rhs) <= (long) Math.pow(2, 53)) {
             return this.div((double) rhs);
         }
         DoubleDouble rhs2 = DoubleDouble.valueOf(rhs);
@@ -414,7 +414,7 @@ public final strictfp class DoubleDouble {
     }
 
     public static DoubleDouble reciprocal(long value) {
-        if (value < (long) Math.pow(2, 53)) {
+        if (Math.abs(value) <= (long) Math.pow(2, 53)) {
             return DoubleDouble.reciprocal((double) value);
         }
         return DoubleDouble.valueOf(1).div(value);
