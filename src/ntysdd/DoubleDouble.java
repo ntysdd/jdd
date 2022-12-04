@@ -144,14 +144,12 @@ public final strictfp class DoubleDouble {
         }
     }
 
-    private static Pair split2(double x) {
-        int exponent = Math.getExponent(x);
-        int shift = exponent + 1022 + 27;
-        double t1 = x;
-        t1 = Math.scalb(t1, -shift);
-        t1 = Math.scalb(t1, shift);
-        double t2 = x - t1;
-        return new Pair(t1, t2);
+    private static Pair split2(double v) {
+        double c = Math.pow(2, 27) + 1;
+        double vp = v * c;
+        double v1 = (v - vp) + vp;
+        double v2 = v - v1;
+        return new Pair(v1, v2);
     }
 
     /**
@@ -176,13 +174,27 @@ public final strictfp class DoubleDouble {
             }
             return new DoubleDouble(r1, r2);
         }
+        int shift = 0;
+        if (lhs >= Math.pow(2, 970)) {
+            lhs *= Math.pow(2, -53);
+            shift += 53;
+        }
+        if (rhs >= Math.pow(2, 970)) {
+            rhs *= Math.pow(2, -53);
+            shift += 53;
+        }
         Pair s1 = split2(lhs);
         Pair s2 = split2(rhs);
-        double c = s1.v1 * s2.v1 - r1;
+        double c = s1.v1 * s2.v1 - lhs * rhs;
         c += s1.v1 * s2.v2;
         c += s1.v2 * s2.v1;
         c += s1.v2 * s2.v2;
-        return new DoubleDouble(r1, c);
+        if (shift == 0) {
+            return new DoubleDouble(lhs * rhs, c);
+        } else {
+            return new DoubleDouble(lhs * rhs * Math.pow(2, shift),
+                    c * Math.pow(2, shift));
+        }
     }
 
     /**
