@@ -178,6 +178,13 @@ public final strictfp class DoubleDouble {
      * 计算一个DoubleDouble和一个double的积，返回DoubleDouble
      */
     public DoubleDouble mul(double rhs) {
+        if (rhs == 0) {
+            double first = this.first;
+            if (first == 0 && Math.copySign(1, rhs) > 0) {
+                return this;
+            }
+            return DoubleDouble.valueOf(first * rhs);
+        }
         if (rhs == 1) {
             return this;
         }
