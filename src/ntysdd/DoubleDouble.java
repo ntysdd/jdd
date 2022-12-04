@@ -225,7 +225,7 @@ public final strictfp class DoubleDouble {
         BigDecimal bd = new BigDecimal(first).add(new BigDecimal(second));
         long longValue = bd.longValue();
         if (bd.compareTo(BigDecimal.valueOf(longValue)) == 0) {
-            return Long.toString(longValue);
+            return this.toStringCache = Long.toString(longValue);
         }
         MathContext mathContext = MathContext.DECIMAL128;
         return this.toStringCache = bd.round(mathContext)
