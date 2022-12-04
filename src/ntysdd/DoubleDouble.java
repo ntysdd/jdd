@@ -137,6 +137,14 @@ public final strictfp class DoubleDouble {
      * 计算两个double的积，结果表示为DoubleDouble
      */
     public static DoubleDouble mul(double lhs, double rhs) {
+        if (lhs * rhs == 0.0) {
+            // 如果lhs或者rhs为0，结果为0
+            // 即使因为下溢导致结果为0，也只能这么处理
+            return DoubleDouble.valueOf(lhs * rhs);
+        }
+        if (lhs == 1.0 || lhs == -1.0 || rhs == 1.0 || rhs == -1.0) {
+            return DoubleDouble.valueOf(lhs * rhs);
+        }
         Pair s1 = split2(lhs);
         Pair s2 = split2(rhs);
         double r1 = lhs * rhs;
