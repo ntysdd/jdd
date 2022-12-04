@@ -67,7 +67,17 @@ public final strictfp class DoubleDouble {
      */
     public DoubleDouble add(double rhs) {
         if (rhs == 0) {
-            return this;
+            if (first == 0 && second == 0) {
+                if (Math.copySign(1, rhs) < 0) {
+                    return this;
+                } else if (Math.copySign(1, first) > 0) {
+                    return this;
+                } else {
+                    return new DoubleDouble(rhs, 0.0);
+                }
+            } else {
+                return this;
+            }
         }
         double first = this.first;
         double second = this.second;
