@@ -409,6 +409,26 @@ public final strictfp class DoubleDouble {
         return this.add(rhs2);
     }
 
+    public static DoubleDouble add(long lhs, double rhs) {
+        return add(rhs, lhs);
+    }
+
+    public static DoubleDouble add(double lhs, long rhs) {
+        if (canLongBeConvertedToDoubleExactly(rhs)) {
+            return add((double) lhs, (double) rhs);
+        }
+        return DoubleDouble.valueOf(rhs).add(lhs);
+    }
+
+    public static DoubleDouble add(long lhs, long rhs) {
+        long value = lhs + rhs;
+        if (((lhs ^ value) & (rhs ^ value)) < 0) {
+            // 溢出
+            return valueOf(lhs).add(rhs);
+        }
+        return valueOf(value);
+    }
+
     public DoubleDouble sub(long rhs) {
         if (canLongBeConvertedToDoubleExactly(rhs)) {
             return this.sub((double) rhs);
