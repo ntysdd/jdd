@@ -135,39 +135,15 @@ public final strictfp class DoubleDouble {
         double x2 = rhs.first;
         double x3 = this.second;
         double x4 = rhs.second;
-        if (Math.abs(x2) > Math.abs(x1)) {
-            double t = x2;
-            x2 = x1;
-            x1 = t;
-            if (Math.abs(x4) > Math.abs(x2)) {
-                t = x2;
-                x2 = x4;
-                x4 = t;
-            }
-        } else if (Math.abs(x3) > Math.abs(x2)) {
-            double t = x2;
-            x2 = x3;
-            x3 = t;
-        }
-        if (Math.abs(x4) > Math.abs(x3)) {
-            double t = x3;
-            x3 = x4;
-            x4 = t;
-        }
-        if (!(Math.abs(x1) >= Math.abs(x2) && Math.abs(x2) >= Math.abs(x3) && Math.abs(x3) >= Math.abs(x4))) {
-            throw new AssertionError();
-        }
-        double[] v = {x1, x2, x3, x4};
-
-        double s = 0;
-        double c = 0;
-        for (double x : v) {
-            c -= x;
-            double s1 = s - c;
-            c = s1 - s + c;
-            s = s1;
-        }
-        return new DoubleDouble(s, -c);
+        DoubleDouble t1 = add(x1, x2);
+        DoubleDouble t2 = add(t1.second, x3);
+        DoubleDouble t3 = add(t1.first, t2.first);
+        DoubleDouble t4 = add(t2.second, t3.second);
+        DoubleDouble t5 = add(t3.first, x4);
+        DoubleDouble t6 = add(t5.second, t4.first);
+        double t7 = t6.second + t4.second;
+        DoubleDouble t8 = add(t7, t6.first);
+        return add(t5.first, t8.first);
     }
 
     /**
