@@ -162,6 +162,21 @@ public final strictfp class DoubleDouble {
     public DoubleDouble add(DoubleDouble rhs) {
         double x1 = this.first;
         double x2 = rhs.first;
+        if (x1 == 0 || x2 == 0) {
+            if (x1 == 0 && x2 == 0) {
+                // 处理±0的问题
+                double res = x1 + x2;
+                if (Double.doubleToRawLongBits(x1) == Double.doubleToRawLongBits(res)) {
+                    return this;
+                } else {
+                    return rhs;
+                }
+            } else if (x2 == 0) {
+                return this;
+            } else {
+                return rhs;
+            }
+        }
         double x3 = this.second;
         double x4 = rhs.second;
         DoubleDouble t1 = add(x1, x2);
