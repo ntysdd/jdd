@@ -153,8 +153,9 @@ public final strictfp class DoubleDouble {
         }
     }
 
+    private static final long POW_2_27 = (long) StrictMath.pow(2, 27);
     private static Pair split2(double v) {
-        double c = Math.pow(2, 27) + 1;
+        double c = POW_2_27 + 1;
         double vp = v * c;
         double v1 = (v - vp) + vp;
         double v2 = v - v1;
