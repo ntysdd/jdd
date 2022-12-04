@@ -67,13 +67,14 @@ public final strictfp class DoubleDouble {
      */
     public DoubleDouble add(double rhs) {
         if (rhs == 0) {
-            if (first == 0 && second == 0) {
-                if (Math.copySign(1, rhs) < 0) {
-                    return this;
-                } else if (Math.copySign(1, first) > 0) {
+            double first = this.first;
+            if (first == 0) {
+                // 0 + 0的特殊形式，需要考虑±0的问题
+                double result = first + rhs;
+                if (Double.doubleToRawLongBits(result) == Double.doubleToRawLongBits(first)) {
                     return this;
                 } else {
-                    return new DoubleDouble(rhs, 0.0);
+                    return DoubleDouble.valueOf(result);
                 }
             } else {
                 return this;
