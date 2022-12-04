@@ -49,24 +49,25 @@ With DoubleDouble you get more precision than "long double" -- instead of 64 bit
 
 For an example, consider this program:
 ```
-    public static void main(String[] args) {
-        double sum = 0;
-        DoubleDouble sum2 = DoubleDouble.valueOf(0);
-        BigDecimal sum3 = BigDecimal.ZERO;
-        for (int i = 1; i < 1_000_000; i++) {
-            double v = 1.0 / i;
-            sum += v;
-            sum2 = sum2.add(v);
-            sum3 = sum3.add(new BigDecimal(v));
-        }
-        System.out.println(sum);
-        System.out.println(sum2);
-        System.out.println(sum3);
+public static void main(String[] args) {
+    double sum = 0;
+    DoubleDouble sum2 = DoubleDouble.valueOf(0);
+    // BigDecimal for reference
+    BigDecimal sum3 = BigDecimal.ZERO;
+    for (int i = 1; i <= 1_000_000; i++) {
+        double v = 1.0 / i;
+        sum += v;
+        sum2 = sum2.add(v);
+        sum3 = sum3.add(new BigDecimal(v));
     }
+    System.out.println(sum);
+    System.out.println(sum2);
+    System.out.println(sum3);
+}
     
-# 14.39272572286499
-# 14.39272572286572357721844463704971
-# 14.392725722865723577218444637049708789700019906376837752759456634521484375
+# 14.392726722864989
+# 14.39272672286572357721839938516153
+# 14.392726722865723577218399385161534675958705520315561443567276000976562500
 ```
 
 Look at the results, when summing 1_000_000 numbers, you lose 3 decimal digits if you don't care and use a plain `double`. In this example, all data have about the same order of magnitude. You will lose more if they are of different order of magnitude, interleaved with positive and negative numbers.
