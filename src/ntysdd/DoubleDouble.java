@@ -66,6 +66,9 @@ public final strictfp class DoubleDouble {
      * 计算一个DoubleDouble和一个double的和，返回DoubleDouble
      */
     public DoubleDouble add(double rhs) {
+        if (rhs == 0) {
+            return this;
+        }
         double first = this.first;
         double second = this.second;
         DoubleDouble t = add(first, rhs);
