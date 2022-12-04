@@ -171,6 +171,25 @@ public final strictfp class DoubleDouble {
         return add(r1, r2).add(r3);
     }
 
+    /**
+     * 计算一个double的倒数
+     */
+    public static DoubleDouble reciprocal(double value) {
+        if (value == 0 || Double.isInfinite(value)) {
+            return new DoubleDouble(1.0 / value, 0);
+        }
+        if (Double.isNaN(value)) {
+            return DoubleDouble.valueOf(value);
+        }
+        if (Math.abs(Math.scalb(value, -Math.getExponent(value))) == 1) {
+            // value是2的整数幂
+            double r = 1.0 / value;
+            return new DoubleDouble(r, 0);
+        }
+
+        return new DoubleDouble(1.0, 0).div(value);
+    }
+
     private DoubleDouble(double first, double second) {
         if (Double.isNaN(first) || Double.isNaN(second)) {
             this.first = Double.NaN;
