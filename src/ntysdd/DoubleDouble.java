@@ -163,6 +163,7 @@ public final strictfp class DoubleDouble {
     }
 
     private static final double POW_2_970 = StrictMath.pow(2, 970);
+    private static final double POW_2_minus_53 = StrictMath.pow(2, -53);
     /**
      * 计算两个double的积，结果表示为DoubleDouble
      */
@@ -187,11 +188,11 @@ public final strictfp class DoubleDouble {
         }
         int shift = 0;
         if (Math.abs(lhs) >= POW_2_970) {
-            lhs *= Math.pow(2, -53);
+            lhs *= POW_2_minus_53;
             shift += 53;
         }
         if (Math.abs(rhs) >= POW_2_970) {
-            rhs *= Math.pow(2, -53);
+            rhs *= POW_2_minus_53;
             shift += 53;
         }
         Pair s1 = split2(lhs);
