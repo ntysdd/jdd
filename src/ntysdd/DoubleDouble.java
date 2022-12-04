@@ -482,8 +482,10 @@ public final strictfp class DoubleDouble {
             return true;
         }
         long v = (long) (double) x;
-        if (v == Long.MAX_VALUE || v == Long.MIN_VALUE) {
+        if (v == Long.MAX_VALUE) {
             // 发生溢出
+            // Long.MIN_VALUE的绝对值是2的整数幂，所以不返回false
+            // 当x不是Long.MIN_VALUE而v是Long.MIN_VALUE时，后续的比较会失败
             return false;
         }
         return v == x;
