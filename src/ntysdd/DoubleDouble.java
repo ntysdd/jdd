@@ -221,14 +221,14 @@ public final strictfp class DoubleDouble {
             this.first = Double.NaN;
             this.second = Double.NaN;
         } else {
-            if (first != 0 && second == 0) {
-                // -0.0导致的问题太多，特殊处理一下
+            // assert Math.abs(first) > Math.abs(second) || first == 0 && second == 0
+            if (first == 0 || second == 0) {
                 this.first = first;
                 this.second = 0;
-                return;
+            } else {
+                this.first = first;
+                this.second = second;
             }
-            this.first = first;
-            this.second = second;
         }
     }
 
