@@ -177,6 +177,9 @@ public final strictfp class DoubleDouble {
         if (lhs == 1.0 || lhs == -1.0 || rhs == 1.0 || rhs == -1.0) {
             return DoubleDouble.valueOf(r1);
         }
+        if (Double.isInfinite(r1)) {
+            return new DoubleDouble(r1, 0);
+        }
         if (FMA_METHOD != null) {
             double r2;
             try {
