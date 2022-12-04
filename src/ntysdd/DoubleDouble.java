@@ -92,6 +92,13 @@ public final strictfp class DoubleDouble {
         return this.add(rhs.neg());
     }
 
+    /**
+     * 计算一个DoubleDouble和一个double的差，返回DoubleDouble
+     */
+    public DoubleDouble sub(double rhs) {
+        return this.add(-rhs);
+    }
+
 
     private static class Pair {
         final double v1;
