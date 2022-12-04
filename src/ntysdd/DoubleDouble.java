@@ -1,5 +1,7 @@
 package ntysdd;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -24,6 +26,16 @@ public final strictfp class DoubleDouble {
     private final double second;
     // 用来缓存String表示
     private String toStringCache;
+
+    private static final Method FMA_METHOD;
+    static {
+        Method fma = null;
+        try {
+            fma = Math.class.getMethod("fma", double.class, double.class, double.class);
+        } catch (NoSuchMethodException ignore) {
+        }
+        FMA_METHOD = fma;
+    }
 
     /**
      * 将double转为DoubleDouble
@@ -146,17 +158,26 @@ public final strictfp class DoubleDouble {
      * 计算两个double的积，结果表示为DoubleDouble
      */
     public static DoubleDouble mul(double lhs, double rhs) {
-        if (lhs * rhs == 0.0) {
+        double r1 = lhs * rhs;
+        if (r1 == 0.0) {
             // 如果lhs或者rhs为0，结果为0
             // 即使因为下溢导致结果为0，也只能这么处理
-            return DoubleDouble.valueOf(lhs * rhs);
+            return DoubleDouble.valueOf(r1);
         }
         if (lhs == 1.0 || lhs == -1.0 || rhs == 1.0 || rhs == -1.0) {
-            return DoubleDouble.valueOf(lhs * rhs);
+            return DoubleDouble.valueOf(r1);
+        }
+        if (FMA_METHOD != null) {
+            double r2;
+            try {
+                r2 = (Double) FMA_METHOD.invoke(null, lhs, rhs, -r1);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new AssertionError(e);
+            }
+            return new DoubleDouble(r1, r2);
         }
         Pair s1 = split2(lhs);
         Pair s2 = split2(rhs);
-        double r1 = lhs * rhs;
         double c = s1.v1 * s2.v1 - r1;
         c += s1.v1 * s2.v2;
         c += s1.v2 * s2.v1;
