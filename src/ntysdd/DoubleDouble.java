@@ -160,6 +160,12 @@ public final strictfp class DoubleDouble {
      * 计算一个DoubleDouble和一个double的积，返回DoubleDouble
      */
     public DoubleDouble mul(double rhs) {
+        if (rhs == 1) {
+            return this;
+        }
+        if (rhs == -1) {
+            return this.neg();
+        }
         DoubleDouble r1 = mul(this.first, rhs);
         DoubleDouble r2 = mul(this.second, rhs);
         return r1.add(r2);
