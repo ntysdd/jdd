@@ -13,6 +13,13 @@ import java.util.Objects;
  * 也不保证中间计算能保留所有精度，不保证计算结果正确到最后一位
  */
 public final strictfp class DoubleDouble {
+    public static final DoubleDouble ZERO = DoubleDouble.valueOf(0.0);
+    public static final DoubleDouble ONE = DoubleDouble.valueOf(1.0);
+    public static final DoubleDouble TWO = DoubleDouble.valueOf(2.0);
+    // 在一个内部使用二进制小数的类里设置这样一个常量有点没有道理
+    // 考虑到常用的BigDecimal类中有这个常量，这里也设置一下
+    public static final DoubleDouble TEN = DoubleDouble.valueOf(10.0);
+
     private final double first;
     private final double second;
     // 用来缓存String表示
