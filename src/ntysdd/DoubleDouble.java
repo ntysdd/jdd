@@ -160,11 +160,15 @@ public final strictfp class DoubleDouble {
      */
     public DoubleDouble div(double rhs) {
         double r1 = this.first / rhs;
-        double rx = this.second / rhs;
         DoubleDouble m = mul(r1, rhs);
-        DoubleDouble r = m.add(new DoubleDouble(-this.first, 0));
-        double r2 = add(-r.first / rhs, rx).first;
-        return new DoubleDouble(r1, r2);
+        DoubleDouble r = m.neg().add(this.first);
+        DoubleDouble rr = r.add(this.second);
+        double r2 = rr.first / rhs;
+        DoubleDouble m2 = mul(r2, rhs);
+        DoubleDouble k = m2.neg().add(rr.first);
+        k = k.add(rr.second);
+        double r3 = k.first / rhs;
+        return add(r1, r2).add(r3);
     }
 
     private DoubleDouble(double first, double second) {
