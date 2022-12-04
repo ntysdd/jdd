@@ -289,6 +289,12 @@ public final strictfp class DoubleDouble {
      */
     public DoubleDouble div(double rhs) {
         double r1 = this.first / rhs;
+        if (Double.isNaN(r1)) {
+            if (Double.isNaN(this.first)) {
+                return this;
+            }
+            return new DoubleDouble(Double.NaN);
+        }
         DoubleDouble m = mul(r1, rhs);
         DoubleDouble r = m.neg().add(this.first);
         DoubleDouble rr = r.add(this.second);
