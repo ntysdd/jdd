@@ -2,7 +2,6 @@ package ntysdd;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -30,6 +29,7 @@ public final strictfp class DoubleDouble {
     private String toStringCache;
 
     private static final MethodHandle FMA_METHOD;
+
     static {
         Method fma = null;
         try {
@@ -184,11 +184,11 @@ public final strictfp class DoubleDouble {
             return new DoubleDouble(r1, r2);
         }
         int shift = 0;
-        if (lhs >= Math.pow(2, 970)) {
+        if (Math.abs(lhs) >= Math.pow(2, 970)) {
             lhs *= Math.pow(2, -53);
             shift += 53;
         }
-        if (rhs >= Math.pow(2, 970)) {
+        if (Math.abs(rhs) >= Math.pow(2, 970)) {
             rhs *= Math.pow(2, -53);
             shift += 53;
         }
