@@ -95,8 +95,8 @@ public final strictfp class DoubleDouble {
      * 计算一个DoubleDouble和一个double的和，返回DoubleDouble
      */
     public DoubleDouble add(double rhs) {
+        double first = this.first;
         if (rhs == 0) {
-            double first = this.first;
             if (first == 0) {
                 // 0 + 0的特殊形式，需要考虑±0的问题
                 double result = first + rhs;
@@ -109,7 +109,15 @@ public final strictfp class DoubleDouble {
                 return this;
             }
         }
-        double first = this.first;
+        if (Double.isInfinite(first) || Double.isInfinite(rhs)) {
+            if (first == rhs) {
+                return this;
+            }
+            if (Double.isNaN(first)) {
+                return this;
+            }
+            return DoubleDouble.valueOf(first + rhs);
+        }
         double second = this.second;
         DoubleDouble t = add(first, rhs);
         double t2 = second + t.second;
