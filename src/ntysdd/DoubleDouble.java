@@ -288,7 +288,12 @@ public final strictfp class DoubleDouble {
         }
         DoubleDouble r1 = mul(first, rhs);
         DoubleDouble r2 = mul(this.second, rhs);
-        DoubleDouble result = r1.add(r2);
+        DoubleDouble result;
+        if (r1.second != 0 || r2.second != 0) {
+            result = r1.add(r2);
+        } else {
+            result = add(r1.first, r2.first);
+        }
         if (result.first == 0) {
             // 处理±0
             double res = Math.copySign(0, this.first * rhs);
