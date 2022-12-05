@@ -429,7 +429,7 @@ public final strictfp class DoubleDouble {
             return this.toStringCache = Double.toString(first);
         }
         if (Double.isInfinite(second)) {
-            return this.toStringCache = Double.toString(second);
+            throw new AssertionError();
         }
         BigDecimal bd = new BigDecimal(first).add(new BigDecimal(second));
         long longValue = bd.longValue();
