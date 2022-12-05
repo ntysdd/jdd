@@ -319,7 +319,7 @@ public final strictfp class DoubleDouble {
         }
         if (result.first == 0) {
             // 处理±0
-            double res = Math.copySign(0, this.first * rhs);
+            double res = Math.copySign(0, first * rhs);
             return DoubleDouble.valueOf(res);
         }
         return result;
@@ -512,6 +512,10 @@ public final strictfp class DoubleDouble {
         if (canLongBeConvertedToDoubleExactly(rhs)) {
             return this.mul((double) rhs);
         }
+        if (Double.isNaN(first) || Double.isInfinite(first)) {
+            // this是NaN或者无穷，不需要考虑精度问题
+            return this.mul((double) rhs);
+        }
         // DoubleDouble和DoubleDouble的乘法还没有实现
         // 先用BigDecimal来处理
         BigDecimal bd = this.toBigDecimal();
@@ -526,6 +530,10 @@ public final strictfp class DoubleDouble {
 
     public DoubleDouble div(long rhs) {
         if (canLongBeConvertedToDoubleExactly(rhs)) {
+            return this.div((double) rhs);
+        }
+        if (Double.isNaN(first) || Double.isInfinite(first)) {
+            // this是NaN或者无穷，不需要考虑精度问题
             return this.div((double) rhs);
         }
         // DoubleDouble和DoubleDouble的除法还没有实现
