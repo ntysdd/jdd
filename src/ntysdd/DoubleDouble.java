@@ -332,6 +332,9 @@ public final strictfp class DoubleDouble {
         if (rhs == 1.0) {
             return this;
         }
+        if (rhs == 0 && Double.isFinite(this.first)) {
+            return DoubleDouble.valueOf(this.first / rhs);
+        }
         if (Math.abs(Math.scalb(rhs, -Math.getExponent(rhs))) == 1) {
             // rhs是2的整数次幂，且1.0 / rhs不会导致无穷
             return this.mul(1.0 / rhs);
