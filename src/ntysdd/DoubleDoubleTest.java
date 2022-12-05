@@ -4,8 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import static ntysdd.DoubleDouble.ONE;
-import static ntysdd.DoubleDouble.ZERO;
+import static ntysdd.DoubleDouble.*;
 
 public class DoubleDoubleTest {
     private static final DoubleDouble NEG_ZERO = DoubleDouble.valueOf(-0.0);
@@ -21,6 +20,9 @@ public class DoubleDoubleTest {
         }
 
         assertEquals(NEG_ZERO, ZERO.neg());
+        if (!NEG_ZERO.toString().startsWith("-")) {
+            throw new AssertionError();
+        }
 
         assertEquals(ZERO, DoubleDouble.valueOf(0));
         assertEquals(ZERO, DoubleDouble.valueOf(0.0));
@@ -118,6 +120,24 @@ public class DoubleDoubleTest {
         assertEquals(NEG_ONE, NEG_ONE.add(NEG_ZERO));
         assertEquals(NEG_ONE, ZERO.add(NEG_ONE));
         assertEquals(NEG_ONE, NEG_ZERO.add(NEG_ONE));
+
+        assertEquals(TWO, ONE.add(ONE));
+        assertEquals(TWO.neg(), ONE.neg().add(ONE.neg()));
+        assertEquals(ZERO, ONE.add(ONE.neg()));
+        assertEquals(DoubleDouble.valueOf(Long.MAX_VALUE).add(1), ONE.add(Long.MAX_VALUE));
+        assertEquals(DoubleDouble.valueOf(Long.MAX_VALUE).add(ONE), ONE.add(Long.MAX_VALUE));
+        assertEquals(DoubleDouble.valueOf(Long.MIN_VALUE).neg(), ONE.add(Long.MAX_VALUE));
+        assertEquals(DoubleDouble.valueOf(Long.MAX_VALUE).neg(), ONE.add(Long.MIN_VALUE));
+        assertEquals(DoubleDouble.valueOf(Long.MIN_VALUE).add(-1),
+                DoubleDouble.valueOf(Long.MAX_VALUE).add(2).neg());
+        assertEquals(DoubleDouble.add(-1, Long.MIN_VALUE),
+                DoubleDouble.valueOf(Long.MAX_VALUE).add(2).neg());
+        assertEquals(DoubleDouble.add(-1, Long.MIN_VALUE + 1),
+                DoubleDouble.valueOf(Long.MAX_VALUE).add(1).neg());
+        assertEquals(DoubleDouble.add(-1.0, Long.MIN_VALUE),
+                DoubleDouble.valueOf(Long.MAX_VALUE).add(2).neg());
+        assertEquals(DoubleDouble.add(-1.0, Long.MIN_VALUE + 1),
+                DoubleDouble.valueOf(Long.MAX_VALUE).add(1).neg());
     }
 
     public static void test005() {
@@ -155,6 +175,9 @@ public class DoubleDoubleTest {
 
         assertEquals(POS_INF, POS_INF.add(POS_INF));
         assertEquals(NEG_INF, NEG_INF.add(NEG_INF));
+
+        assertEquals(Double.toString(Double.POSITIVE_INFINITY), POS_INF.toString());
+        assertEquals(Double.toString(Double.NEGATIVE_INFINITY), NEG_INF.toString());
     }
 
     public static void test006() {
@@ -163,6 +186,7 @@ public class DoubleDoubleTest {
         final DoubleDouble NaN = DoubleDouble.valueOf(Double.NaN);
         assertEquals(NaN, NaN);
         assertEquals(NaN, NaN.neg());
+        assertEquals("NaN", NaN.toString());
 
         assertEquals(Double.NaN, NaN.getFirst());
         assertEquals(Double.NaN, NaN.getSecond());
@@ -214,6 +238,53 @@ public class DoubleDoubleTest {
         assertEquals(NaN, DoubleDouble.add(Double.NaN, Double.POSITIVE_INFINITY));
         assertEquals(NaN, DoubleDouble.add(Double.NEGATIVE_INFINITY, Double.NaN));
         assertEquals(NaN, DoubleDouble.add(Double.NaN, Double.NEGATIVE_INFINITY));
+    }
+
+    public static void test007() {
+        if (System.identityHashCode(ZERO.toString()) != System.identityHashCode(ZERO.toString())) {
+            throw new AssertionError();
+        }
+        long value = Long.MAX_VALUE;
+        for (int i = 0; i < 10; i++) {
+            DoubleDouble v = DoubleDouble.valueOf(value - i);
+            assertEquals(value - i, v.toBigDecimal().longValueExact());
+            assertEquals(Long.toString(value - i), v.toString());
+        }
+        value = Long.MIN_VALUE;
+        for (int i = 0; i < 10; i++) {
+            DoubleDouble v = DoubleDouble.valueOf(value + i);
+            assertEquals(value + i, v.toBigDecimal().longValueExact());
+            assertEquals(Long.toString(value + i), v.toString());
+        }
+        value = (long)StrictMath.pow(2, 53) + 10;
+        for (int i = 0; i < 20; i++) {
+            DoubleDouble v = DoubleDouble.valueOf(value - i);
+            assertEquals(value - i, v.toBigDecimal().longValueExact());
+            assertEquals(Long.toString(value - i), v.toString());
+        }
+        value = -((long)StrictMath.pow(2, 53) + 10);
+        for (int i = 0; i < 20; i++) {
+            DoubleDouble v = DoubleDouble.valueOf(value + i);
+            assertEquals(value + i, v.toBigDecimal().longValueExact());
+            assertEquals(Long.toString(value + i), v.toString());
+        }
+    }
+
+    public static void test008() {
+        assertEquals(ZERO, ZERO.sub(ZERO));
+        assertEquals(ZERO, ZERO.sub(0));
+        assertEquals(ZERO, ZERO.sub(0.0));
+        assertEquals(ZERO, ZERO.sub(NEG_ZERO));
+        assertEquals(ZERO, ZERO.sub(-0.0));
+        assertEquals(ZERO, NEG_ZERO.sub(NEG_ZERO));
+        assertEquals(ZERO, NEG_ZERO.sub(-0.0));
+        assertEquals(NEG_ZERO, NEG_ZERO.sub(ZERO));
+        assertEquals(NEG_ZERO, NEG_ZERO.sub(0));
+        assertEquals(NEG_ZERO, NEG_ZERO.sub(0.0));
+
+        assertEquals(ONE.neg(), ZERO.sub(ONE));
+        assertEquals(ONE.neg(), ZERO.sub(1));
+
     }
 
     public static void main(String[] args) throws Exception {
