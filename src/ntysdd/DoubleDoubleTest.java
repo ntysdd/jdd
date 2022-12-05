@@ -138,6 +138,7 @@ public class DoubleDoubleTest {
                 DoubleDouble.valueOf(Long.MAX_VALUE).add(2).neg());
         assertEquals(DoubleDouble.add(-1.0, Long.MIN_VALUE + 1),
                 DoubleDouble.valueOf(Long.MAX_VALUE).add(1).neg());
+        assertEquals(ZERO, DoubleDouble.add(1, Long.MIN_VALUE).sub(1 + Long.MIN_VALUE));
     }
 
     public static void test005() {
@@ -305,7 +306,7 @@ public class DoubleDoubleTest {
                 DIV_1_3.mul(2).toString().substring(2, 2 + 32));
     }
 
-    public static void test10() {
+    public static void test010() {
         assertEquals(ZERO, DoubleDouble.mul(1E-300, 1E-300));
         assertEquals(NEG_ZERO, DoubleDouble.mul(-1E-300, 1E-300));
         assertEquals(NEG_ZERO, DoubleDouble.mul(1E-300, -1E-300));
@@ -338,6 +339,91 @@ public class DoubleDoubleTest {
         if (Math.abs(DoubleDouble.mul(1E300, 1E-300).sub(1).getFirst()) > 7.75638521E-17) {
             throw new AssertionError();
         }
+
+
+        assertEquals(ZERO, ONE.mul(0.0));
+        assertEquals(NEG_ZERO, ONE.mul(-0.0));
+        assertEquals(NEG_ZERO, ONE.neg().mul(0.0));
+        assertEquals(ZERO, ONE.neg().mul(-0.0));
+
+        assertEquals(ZERO, ZERO.mul(0.0));
+        assertEquals(NEG_ZERO, ZERO.mul(-0.0));
+        assertEquals(NEG_ZERO, NEG_ZERO.mul(0.0));
+        assertEquals(ZERO, NEG_ZERO.mul(-0.0));
+
+        assertEquals(ONE, ONE.mul(1.0));
+        assertEquals(DoubleDouble.valueOf(Integer.MAX_VALUE), ONE.mul(Integer.MAX_VALUE));
+        assertEquals(DoubleDouble.valueOf(Integer.MIN_VALUE), ONE.mul(Integer.MIN_VALUE));
+        assertEquals(DoubleDouble.valueOf(Long.MAX_VALUE), ONE.mul(Long.MAX_VALUE));
+        assertEquals(DoubleDouble.valueOf(Long.MIN_VALUE), ONE.mul(Long.MIN_VALUE));
+        assertEquals(ONE.neg(), ONE.mul(-1.0));
+
+        assertEquals(DoubleDouble.valueOf((long) Integer.MAX_VALUE * Integer.MAX_VALUE),
+                DoubleDouble.valueOf(Integer.MAX_VALUE).mul(Integer.MAX_VALUE));
+        assertEquals(ZERO, DoubleDouble.valueOf(1E-300).div(3).mul(1E-300 / 7));
+        assertEquals(NEG_ZERO, DoubleDouble.valueOf(-1E-300).div(3).mul(1E-300 / 7));
+        assertEquals(NEG_ZERO, DoubleDouble.valueOf(1E-300).div(3).mul(-1E-300 / 7));
+        assertEquals(ZERO, DoubleDouble.valueOf(-1E-300).div(3).mul(-1E-300 / 7));
+
+        assertEquals(DoubleDouble.valueOf(Double.NaN), DoubleDouble.valueOf(Long.MAX_VALUE)
+                .mul(Double.NaN));
+        assertEquals(DoubleDouble.valueOf(Double.NaN), DoubleDouble.valueOf(Double.NaN)
+                .mul(Long.MAX_VALUE));
+    }
+
+    public static void test011() {
+        DoubleDouble DD_1_3 = ONE.div(3);
+        DoubleDouble DD_1_7 = ONE.div(7);
+        if (Math.abs(DD_1_3.mul(3).sub(1).getFirst()) > 1E-32) {
+            throw new AssertionError();
+        }
+        if (Math.abs(DD_1_7.mul(7).sub(1).getFirst()) > 1E-32) {
+            throw new AssertionError();
+        }
+        if (Math.abs(DD_1_3.mul(1.0 / 7.0).mul(21).sub(1).getFirst()) > 6E-17) {
+            throw new AssertionError();
+        }
+        assertEquals(ZERO, DD_1_3.mul(1E-200).mul(1E-300));
+        assertEquals(NEG_ZERO, DD_1_3.mul(1E-200).mul(-1E-300));
+    }
+
+    public static void test012() {
+        assertEquals(ZERO, ZERO.div(1));
+        assertEquals(NEG_ZERO, ZERO.div(-1));
+        assertEquals(ONE.div(3).div(-1), ONE.div(-3).div(1));
+        assertEquals(ONE.div(3).div(StrictMath.pow(2, -100)),
+                ONE.div(3).mul(StrictMath.pow(2, 100)));
+
+        DoubleDouble DIV_1_LONG_MAX = ONE.div(Long.MAX_VALUE);
+        assertEquals(DIV_1_LONG_MAX, DoubleDouble.reciprocal(Long.MAX_VALUE));
+        if (Math.abs(DIV_1_LONG_MAX.mul(Long.MAX_VALUE).sub(1).getFirst()) > 1.1755E-38) {
+            throw new AssertionError();
+        }
+        assertEquals(ZERO, DoubleDouble.valueOf(Double.MIN_VALUE).div(Long.MAX_VALUE));
+        assertEquals(NEG_ZERO, DoubleDouble.valueOf(Double.MIN_VALUE).div(-Long.MAX_VALUE));
+        assertEquals(NEG_ZERO, DoubleDouble.valueOf(-Double.MIN_VALUE).div(Long.MAX_VALUE));
+        assertEquals(ZERO, DoubleDouble.valueOf(-Double.MIN_VALUE).div(-Long.MAX_VALUE));
+
+        assertEquals(DoubleDouble.valueOf(Double.NaN), DoubleDouble.valueOf(Double.NaN)
+                .div(Long.MAX_VALUE));
+        assertEquals(DoubleDouble.valueOf(Double.POSITIVE_INFINITY), DoubleDouble.valueOf(Double.POSITIVE_INFINITY)
+                .div(Long.MAX_VALUE));
+        assertEquals(DoubleDouble.valueOf(Double.NEGATIVE_INFINITY), DoubleDouble.valueOf(Double.NEGATIVE_INFINITY)
+                .div(Long.MAX_VALUE));
+        assertEquals(DoubleDouble.valueOf(Double.NEGATIVE_INFINITY), DoubleDouble.valueOf(Double.POSITIVE_INFINITY)
+                .div(Long.MIN_VALUE + 1));
+        assertEquals(DoubleDouble.valueOf(Double.POSITIVE_INFINITY), DoubleDouble.valueOf(Double.NEGATIVE_INFINITY)
+                .div(Long.MIN_VALUE + 1));
+
+        assertEquals(DoubleDouble.valueOf(Double.NaN),
+                DoubleDouble.valueOf(Double.NaN).div(3));
+        assertEquals(DoubleDouble.valueOf(Double.NaN),
+                DoubleDouble.valueOf(3).div(Double.NaN));
+
+        assertEquals(DoubleDouble.valueOf(Double.NaN),
+                DoubleDouble.reciprocal(Double.NaN));
+        assertEquals(DoubleDouble.valueOf(32),
+                DoubleDouble.reciprocal(0.03125));
     }
 
     public static void main(String[] args) throws Exception {
