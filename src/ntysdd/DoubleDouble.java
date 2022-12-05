@@ -302,6 +302,13 @@ public final strictfp class DoubleDouble {
         if (this.first == 0 && rhs != 0) {
             return this.mul(rhs);
         }
+        if (rhs == 1.0) {
+            return this;
+        }
+        if (Math.abs(Math.scalb(rhs, -Math.getExponent(rhs))) == 1) {
+            // rhs是2的整数次幂，且1.0 / rhs不会导致无穷
+            return this.mul(1.0 / rhs);
+        }
         double r1 = this.first / rhs;
         if (Double.isNaN(r1)) {
             if (Double.isNaN(this.first)) {
