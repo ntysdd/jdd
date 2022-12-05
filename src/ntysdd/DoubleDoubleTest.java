@@ -426,6 +426,35 @@ public class DoubleDoubleTest {
                 DoubleDouble.reciprocal(0.03125));
     }
 
+    public static void test013() {
+        assertEquals(ZERO, DoubleDouble.mul(0.0, 0.0));
+        assertEquals(NEG_ZERO, DoubleDouble.mul(-0.0, 0.0));
+        assertEquals(NEG_ZERO, DoubleDouble.mul(0.0, -0.0));
+        assertEquals(ZERO, DoubleDouble.mul(-0.0, -0.0));
+
+        assertEquals(ZERO, DoubleDouble.ZERO.mul(Long.MAX_VALUE));
+        assertEquals(NEG_ZERO, DoubleDouble.ZERO.mul(-Long.MAX_VALUE));
+        assertEquals(NEG_ZERO, NEG_ZERO.mul(Long.MAX_VALUE));
+        assertEquals(ZERO, NEG_ZERO.mul(-Long.MAX_VALUE));
+
+        assertEquals(DoubleDouble.valueOf(Double.NaN),
+                DoubleDouble.mul(Double.POSITIVE_INFINITY, 0.0));
+        assertEquals(DoubleDouble.valueOf(Double.NaN),
+                DoubleDouble.mul(Double.POSITIVE_INFINITY, -0.0));
+        assertEquals(DoubleDouble.valueOf(Double.NaN),
+                DoubleDouble.mul(Double.NEGATIVE_INFINITY, 0.0));
+        assertEquals(DoubleDouble.valueOf(Double.NaN),
+                DoubleDouble.mul(Double.NEGATIVE_INFINITY, -0.0));
+        assertEquals(DoubleDouble.valueOf(Double.NaN),
+                DoubleDouble.mul(0.0, Double.POSITIVE_INFINITY));
+        assertEquals(DoubleDouble.valueOf(Double.NaN),
+                DoubleDouble.mul(-0.0, Double.POSITIVE_INFINITY));
+        assertEquals(DoubleDouble.valueOf(Double.NaN),
+                DoubleDouble.mul(0.0, Double.NEGATIVE_INFINITY));
+        assertEquals(DoubleDouble.valueOf(Double.NaN),
+                DoubleDouble.mul(-0.0, Double.NEGATIVE_INFINITY));
+    }
+
     public static void main(String[] args) throws Exception {
         Method[] methods = Arrays.stream(DoubleDoubleTest.class.getMethods())
                 .filter(m -> m.getName().matches("test[0-9]+")
