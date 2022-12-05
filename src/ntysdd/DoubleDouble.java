@@ -176,11 +176,8 @@ public final strictfp class DoubleDouble {
             // 即使因为下溢导致结果为0，也只能这么处理
             return DoubleDouble.valueOf(r1);
         }
-        if (lhs == 1.0 || lhs == -1.0 || rhs == 1.0 || rhs == -1.0) {
-            return DoubleDouble.valueOf(r1);
-        }
         if (Double.isInfinite(r1)) {
-            return new DoubleDouble(r1, 0);
+            return new DoubleDouble(r1);
         }
         if (FMA_METHOD != null) {
             double r2;
@@ -193,6 +190,11 @@ public final strictfp class DoubleDouble {
         }
         if (Double.isNaN(r1)) {
             return new DoubleDouble(Double.NaN);
+        }
+        double mantissa1 = Math.scalb(lhs, -Math.getExponent(lhs));
+        double mantissa2 = Math.scalb(rhs, -Math.getExponent(rhs));
+        if (Math.abs(mantissa1) == 1.0 || Math.abs(mantissa2) == 1.0) {
+            return DoubleDouble.valueOf(r1);
         }
         int shift = 0;
         if (Math.abs(lhs) >= POW_2_970) {
