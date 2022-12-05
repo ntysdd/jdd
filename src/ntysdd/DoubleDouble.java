@@ -331,7 +331,22 @@ public final strictfp class DoubleDouble {
     public DoubleDouble div(double rhs) {
         double first = this.first;
         if (first == 0 && rhs != 0) {
-            return this.mul(rhs);
+            if (Double.isNaN(rhs)) {
+                return DoubleDouble.valueOf(Double.NaN);
+            }
+            if (Double.isFinite(rhs)) {
+                return this.mul(rhs);
+            } else {
+                return this.mul(1.0 / rhs);
+            }
+        }
+        if (Double.isInfinite(rhs)) {
+            return this.mul(1.0 / rhs);
+        }
+        if (Double.isInfinite(first)) {
+            if (Double.isFinite(rhs) && rhs != 0) {
+                return this.mul(rhs);
+            }
         }
         if (rhs == 1.0) {
             return this;
