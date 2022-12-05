@@ -278,6 +278,9 @@ public final strictfp class DoubleDouble {
         if (rhs == -1) {
             return this.neg();
         }
+        if (this.second == 0) {
+            return mul(first, rhs);
+        }
         DoubleDouble r1 = mul(first, rhs);
         DoubleDouble r2 = mul(this.second, rhs);
         DoubleDouble result = r1.add(r2);
