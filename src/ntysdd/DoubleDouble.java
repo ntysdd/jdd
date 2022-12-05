@@ -329,28 +329,33 @@ public final strictfp class DoubleDouble {
      * 计算一个DoubleDouble和一个double的商，返回DoubleDouble
      */
     public DoubleDouble div(double rhs) {
-        if (this.first == 0 && rhs != 0) {
+        double first = this.first;
+        if (first == 0 && rhs != 0) {
             return this.mul(rhs);
         }
         if (rhs == 1.0) {
             return this;
         }
-        if (rhs == 0 && Double.isFinite(this.first)) {
-            return DoubleDouble.valueOf(this.first / rhs);
+        if (Double.isNaN(first)) {
+            return this;
+        }
+        if (rhs == 0) {
+            double res = first / rhs;
+            if (Double.doubleToLongBits(res) == Double.doubleToLongBits(this.first)) {
+                return this;
+            }
+            return DoubleDouble.valueOf(res);
         }
         if (Math.abs(Math.scalb(rhs, -Math.getExponent(rhs))) == 1) {
             // rhs是2的整数次幂，且1.0 / rhs不会导致无穷
             return this.mul(1.0 / rhs);
         }
-        double r1 = this.first / rhs;
+        double r1 = first / rhs;
         if (Double.isNaN(r1)) {
-            if (Double.isNaN(this.first)) {
-                return this;
-            }
             return new DoubleDouble(Double.NaN);
         }
         DoubleDouble m = mul(r1, rhs);
-        DoubleDouble r = m.neg().add(this.first);
+        DoubleDouble r = m.neg().add(first);
         DoubleDouble rr = r.add(this.second);
         double r2 = rr.first / rhs;
         DoubleDouble m2 = mul(r2, rhs);
