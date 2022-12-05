@@ -328,6 +328,16 @@ public class DoubleDoubleTest {
         assertEquals(NEG_INF, DoubleDouble.mul(-1E300, 1E300));
         assertEquals(NEG_INF, DoubleDouble.mul(1E300, -1E300));
         assertEquals(POS_INF, DoubleDouble.mul(-1E300, -1E300));
+        assertEquals(DoubleDouble.valueOf(Double.NaN), DoubleDouble.mul(Double.NaN, 0));
+        assertEquals(DoubleDouble.valueOf(Double.NaN), DoubleDouble.mul(0, Double.NaN));
+        assertEquals(ONE, DoubleDouble.mul(32.0, 0.03125));
+
+        assertEquals(DoubleDouble.mul(1E-300, 1E300),
+                DoubleDouble.mul(1E300, 1E-300));
+        assertEquals(1.0, DoubleDouble.mul(1E300, 1E-300).getFirst());
+        if (Math.abs(DoubleDouble.mul(1E300, 1E-300).sub(1).getFirst()) > 7.75638521E-17) {
+            throw new AssertionError();
+        }
     }
 
     public static void main(String[] args) throws Exception {
