@@ -284,7 +284,25 @@ public class DoubleDoubleTest {
 
         assertEquals(ONE.neg(), ZERO.sub(ONE));
         assertEquals(ONE.neg(), ZERO.sub(1));
+    }
 
+    public static void test009() {
+        final DoubleDouble DIV_1_3 = ONE.div(3);
+        final DoubleDouble DIV_1_3_0 = ONE.div(3.0);
+        final DoubleDouble RECIPROCAL_3 = DoubleDouble.reciprocal(3);
+        final DoubleDouble RECIPROCAL_3_0 = DoubleDouble.reciprocal(3.0);
+
+        assertEquals(DIV_1_3, DIV_1_3_0);
+        assertEquals(DIV_1_3_0, RECIPROCAL_3);
+        assertEquals(RECIPROCAL_3, RECIPROCAL_3_0);
+
+        assertEquals("0.", DIV_1_3.toString().substring(0, 2));
+        assertEquals("33333333333333333333333333333333",
+                DIV_1_3.toString().substring(2, 2 + 32));
+
+        assertEquals(2.0 / 3.0, DIV_1_3.mul(2).getFirst());
+        assertEquals("66666666666666666666666666666666",
+                DIV_1_3.mul(2).toString().substring(2, 2 + 32));
     }
 
     public static void main(String[] args) throws Exception {
