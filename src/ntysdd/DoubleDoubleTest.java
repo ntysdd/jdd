@@ -127,6 +127,7 @@ public class DoubleDoubleTest {
             throw new AssertionError();
         }
         assertEquals(NEG_INF, POS_INF.neg());
+        assertEquals(POS_INF, NEG_INF.neg());
 
         assertEquals(POS_INF, POS_INF.add(ZERO));
         assertEquals(POS_INF, POS_INF.add(0.0));
@@ -161,6 +162,7 @@ public class DoubleDoubleTest {
         final DoubleDouble NEG_INF = DoubleDouble.valueOf(Double.NEGATIVE_INFINITY);
         final DoubleDouble NaN = DoubleDouble.valueOf(Double.NaN);
         assertEquals(NaN, NaN);
+        assertEquals(NaN, NaN.neg());
 
         assertEquals(Double.NaN, NaN.getFirst());
         assertEquals(Double.NaN, NaN.getSecond());
