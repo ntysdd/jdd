@@ -455,6 +455,20 @@ public class DoubleDoubleTest {
                 DoubleDouble.mul(-0.0, Double.NEGATIVE_INFINITY));
     }
 
+    public static void test014() {
+        DoubleDouble POS_INF = valueOf(Double.POSITIVE_INFINITY);
+        DoubleDouble NEG_INF = valueOf(Double.NEGATIVE_INFINITY);
+        assertEquals(POS_INF, POS_INF.div(0.0));
+        assertEquals(NEG_INF, POS_INF.div(-0.0));
+        assertEquals(NEG_INF, NEG_INF.div(0.0));
+        assertEquals(POS_INF, NEG_INF.div(-0.0));
+
+        assertEquals(ZERO, ZERO.div(Double.POSITIVE_INFINITY));
+        assertEquals(NEG_ZERO, ZERO.div(Double.NEGATIVE_INFINITY));
+        assertEquals(NEG_ZERO, NEG_ZERO.div(Double.POSITIVE_INFINITY));
+        assertEquals(ZERO, NEG_ZERO.div(Double.NEGATIVE_INFINITY));
+    }
+
     public static void main(String[] args) throws Exception {
         Method[] methods = Arrays.stream(DoubleDoubleTest.class.getMethods())
                 .filter(m -> m.getName().matches("test[0-9]+")
