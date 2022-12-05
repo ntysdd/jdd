@@ -299,6 +299,9 @@ public final strictfp class DoubleDouble {
      * 计算一个DoubleDouble和一个double的商，返回DoubleDouble
      */
     public DoubleDouble div(double rhs) {
+        if (this.first == 0 && rhs != 0) {
+            return this.mul(rhs);
+        }
         double r1 = this.first / rhs;
         if (Double.isNaN(r1)) {
             if (Double.isNaN(this.first)) {
