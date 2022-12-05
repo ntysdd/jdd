@@ -303,6 +303,12 @@ public final strictfp class DoubleDouble {
         if (this.second == 0) {
             return mul(first, rhs);
         }
+        if (Double.isNaN(first)) {
+            return this;
+        }
+        if (Double.isNaN(rhs)) {
+            return DoubleDouble.valueOf(Double.NaN);
+        }
         DoubleDouble r1 = mul(first, rhs);
         DoubleDouble r2 = mul(this.second, rhs);
         DoubleDouble result;
@@ -314,9 +320,6 @@ public final strictfp class DoubleDouble {
         if (result.first == 0) {
             // 处理±0
             double res = Math.copySign(0, this.first * rhs);
-            if (Double.doubleToRawLongBits(res) == Double.doubleToRawLongBits(first)) {
-                return this;
-            }
             return DoubleDouble.valueOf(res);
         }
         return result;
