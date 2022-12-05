@@ -305,6 +305,31 @@ public class DoubleDoubleTest {
                 DIV_1_3.mul(2).toString().substring(2, 2 + 32));
     }
 
+    public static void test10() {
+        assertEquals(ZERO, DoubleDouble.mul(1E-300, 1E-300));
+        assertEquals(NEG_ZERO, DoubleDouble.mul(-1E-300, 1E-300));
+        assertEquals(NEG_ZERO, DoubleDouble.mul(1E-300, -1E-300));
+        assertEquals(ZERO, DoubleDouble.mul(-1E-300, -1E-300));
+
+        final DoubleDouble POS_INF = DoubleDouble.valueOf(Double.POSITIVE_INFINITY);
+        final DoubleDouble NEG_INF = DoubleDouble.valueOf(Double.NEGATIVE_INFINITY);
+
+        assertEquals(POS_INF, DoubleDouble.reciprocal(0.0));
+        assertEquals(POS_INF, DoubleDouble.valueOf(100).div(0.0));
+        assertEquals(POS_INF, DoubleDouble.valueOf(-100).div(-0.0));
+        assertEquals(POS_INF, DoubleDouble.reciprocal(0));
+        assertEquals(NEG_INF, DoubleDouble.reciprocal(-0.0));
+        assertEquals(NEG_INF, DoubleDouble.valueOf(-100).div(0.0));
+        assertEquals(NEG_INF, DoubleDouble.valueOf(100).div(-0.0));
+        assertEquals(ZERO, DoubleDouble.reciprocal(Double.POSITIVE_INFINITY));
+        assertEquals(NEG_ZERO, DoubleDouble.reciprocal(Double.NEGATIVE_INFINITY));
+
+        assertEquals(POS_INF, DoubleDouble.mul(1E300, 1E300));
+        assertEquals(NEG_INF, DoubleDouble.mul(-1E300, 1E300));
+        assertEquals(NEG_INF, DoubleDouble.mul(1E300, -1E300));
+        assertEquals(POS_INF, DoubleDouble.mul(-1E300, -1E300));
+    }
+
     public static void main(String[] args) throws Exception {
         Method[] methods = Arrays.stream(DoubleDoubleTest.class.getMethods())
                 .filter(m -> m.getName().matches("test[0-9]+")
