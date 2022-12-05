@@ -191,6 +191,11 @@ public final strictfp class DoubleDouble {
         if (Double.isNaN(r1)) {
             return new DoubleDouble(Double.NaN);
         }
+        if (Math.abs(lhs) == 1 || Math.abs(lhs) == 0.5 || Math.abs(lhs) == 2
+                || Math.abs(rhs) == 1 || Math.abs(rhs) == 0.5 || Math.abs(rhs) == 2) {
+            // 这些常见值走快速路径
+            return DoubleDouble.valueOf(r1);
+        }
         double mantissa1 = Math.scalb(lhs, -Math.getExponent(lhs));
         double mantissa2 = Math.scalb(rhs, -Math.getExponent(rhs));
         if (Math.abs(mantissa1) == 1.0 || Math.abs(mantissa2) == 1.0) {
