@@ -263,11 +263,12 @@ public final strictfp class DoubleDouble {
     public DoubleDouble mul(double rhs) {
         double first = this.first;
         if (first == 0 || rhs == 0) {
+            double res = first * rhs;
             // 处理±0
-            if (first == 0 && Math.copySign(1, rhs) > 0) {
+            if (Double.doubleToLongBits(first) == Double.doubleToLongBits(res)) {
                 return this;
             }
-            return DoubleDouble.valueOf(first * rhs);
+            return DoubleDouble.valueOf(res);
         }
         if (rhs == 1) {
             return this;
