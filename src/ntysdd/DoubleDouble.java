@@ -109,11 +109,14 @@ public final strictfp class DoubleDouble {
                 return this;
             }
         }
+        if (Double.isNaN(first)) {
+            return this;
+        }
+        if (Double.isNaN(rhs)) {
+            return DoubleDouble.valueOf(Double.NaN);
+        }
         if (Double.isInfinite(first) || Double.isInfinite(rhs)) {
             if (first == rhs) {
-                return this;
-            }
-            if (Double.isNaN(first)) {
                 return this;
             }
             return DoubleDouble.valueOf(first + rhs);
