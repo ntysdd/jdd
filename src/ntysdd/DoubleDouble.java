@@ -262,6 +262,12 @@ public final strictfp class DoubleDouble {
                 return rhs;
             }
         }
+        if (Double.isInfinite(x1)) {
+            if (Double.isFinite(x2) || x1 == x2) {
+                return this;
+            }
+            return DoubleDouble.valueOf(Double.NaN);
+        }
         double x3 = this.second;
         double x4 = rhs.second;
         DoubleDouble t1 = add(x1, x2);
