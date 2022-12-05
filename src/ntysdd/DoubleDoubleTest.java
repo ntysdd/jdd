@@ -467,6 +467,16 @@ public class DoubleDoubleTest {
         assertEquals(NEG_ZERO, ZERO.div(Double.NEGATIVE_INFINITY));
         assertEquals(NEG_ZERO, NEG_ZERO.div(Double.POSITIVE_INFINITY));
         assertEquals(ZERO, NEG_ZERO.div(Double.NEGATIVE_INFINITY));
+
+        assertEquals(POS_INF, POS_INF.div(100));
+        assertEquals(NEG_INF, POS_INF.div(-100));
+        assertEquals(NEG_INF, NEG_INF.div(100));
+        assertEquals(POS_INF, NEG_INF.div(-100));
+
+        assertEquals(DoubleDouble.valueOf(Double.NaN), POS_INF.div(Double.POSITIVE_INFINITY));
+        assertEquals(DoubleDouble.valueOf(Double.NaN), NEG_INF.div(Double.POSITIVE_INFINITY));
+        assertEquals(DoubleDouble.valueOf(Double.NaN), POS_INF.div(Double.NEGATIVE_INFINITY));
+        assertEquals(DoubleDouble.valueOf(Double.NaN), NEG_INF.div(Double.NEGATIVE_INFINITY));
     }
 
     public static void main(String[] args) throws Exception {
