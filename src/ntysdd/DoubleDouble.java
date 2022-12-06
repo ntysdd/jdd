@@ -615,6 +615,43 @@ public final strictfp class DoubleDouble {
         return DoubleDouble.valueOf(1).div(value);
     }
 
+    public static DoubleDouble reciprocal(DoubleDouble value) {
+        double first = value.first;
+        if (first == 0 || Double.isInfinite(first)) {
+            return DoubleDouble.valueOf(1.0 / first);
+        }
+        double second = value.second;
+        if (second == 0) {
+            return reciprocal(first);
+        }
+        if (Double.isNaN(first)) {
+            return DoubleDouble.valueOf(Double.NaN);
+        }
+
+        double reciprocal0 = 1.0 / first;
+        DoubleDouble reciprocal1 = DoubleDouble.ONE.sub(mul(reciprocal0, first)).div(first);
+
+        DoubleDouble eps = DoubleDouble.valueOf(second).div(first);
+
+        double eps2 = eps.first * eps.first;
+
+        double[] v = {reciprocal0,
+                -eps.div(first).first,
+                reciprocal1.first,
+                -eps.div(first).second,
+                eps2 / first,
+                reciprocal1.second};
+        BigDecimal bd = BigDecimal.ZERO;
+        for (double t : v) {
+            bd = bd.add(new BigDecimal(t));
+        }
+
+        double d1 = bd.doubleValue();
+        double d2 = bd.subtract(new BigDecimal(d1)).doubleValue();
+
+        return new DoubleDouble(d1, d2);
+    }
+
     private static final long POW_2_53 = (long) StrictMath.pow(2, 53);
 
     private static boolean canLongBeConvertedToDoubleExactly(long x) {
