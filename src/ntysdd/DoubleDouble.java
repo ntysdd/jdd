@@ -641,15 +641,15 @@ public final strictfp class DoubleDouble {
                 -eps.div(first).second,
                 eps2 / first,
                 reciprocal1.second};
-        BigDecimal bd = BigDecimal.ZERO;
-        for (double t : v) {
-            bd = bd.add(new BigDecimal(t));
+
+        DoubleDouble sum = ZERO;
+
+        for (int i = v.length - 1; i >= 0; i--) {
+            double x = v[i];
+            sum = sum.add(x);
         }
 
-        double d1 = bd.doubleValue();
-        double d2 = bd.subtract(new BigDecimal(d1)).doubleValue();
-
-        return new DoubleDouble(d1, d2);
+        return sum;
     }
 
     private static final long POW_2_53 = (long) StrictMath.pow(2, 53);
