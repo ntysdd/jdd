@@ -523,10 +523,16 @@ public class DoubleDoubleTest {
 
         assertSameObject(ONE, zero.add(ONE));
         assertSameObject(ONE, ONE.add(zero));
+        assertSameObject(ONE, ONE.add(0));
+        assertSameObject(ONE, ONE.add(0.0));
         assertSameObject(POS_INF, zero.add(POS_INF));
         assertSameObject(POS_INF, POS_INF.add(zero));
+        assertSameObject(POS_INF, POS_INF.add(0));
+        assertSameObject(POS_INF, POS_INF.add(0.0));
         assertSameObject(NEG_INF, zero.add(NEG_INF));
         assertSameObject(NEG_INF, NEG_INF.add(zero));
+        assertSameObject(NEG_INF, NEG_INF.add(0));
+        assertSameObject(NEG_INF, NEG_INF.add(0.0));
 
         assertSameObject(negZero, negZero.add(-0.0));
         assertSameObject(negZero, negZero.add(DoubleDouble.valueOf(-0.0)));
@@ -535,8 +541,10 @@ public class DoubleDoubleTest {
         assertSameObject(ONE, ONE.add(negZero));
         assertSameObject(POS_INF, negZero.add(POS_INF));
         assertSameObject(POS_INF, POS_INF.add(negZero));
+        assertSameObject(POS_INF, POS_INF.add(-0.0));
         assertSameObject(NEG_INF, negZero.add(NEG_INF));
         assertSameObject(NEG_INF, NEG_INF.add(negZero));
+        assertSameObject(NEG_INF, NEG_INF.add(-0.0));
     }
 
     public static void main(String[] args) throws Exception {
