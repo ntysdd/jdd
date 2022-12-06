@@ -418,6 +418,10 @@ public class DoubleDoubleTest {
         assertEquals(DoubleDouble.valueOf(Double.NaN),
                 DoubleDouble.valueOf(Double.NaN).div(3));
         assertEquals(DoubleDouble.valueOf(Double.NaN),
+                ZERO.div(Double.NaN));
+        assertEquals(DoubleDouble.valueOf(Double.NaN),
+                NEG_ZERO.div(Double.NaN));
+        assertEquals(DoubleDouble.valueOf(Double.NaN),
                 DoubleDouble.valueOf(3).div(Double.NaN));
 
         assertEquals(DoubleDouble.valueOf(Double.NaN),
@@ -453,6 +457,13 @@ public class DoubleDoubleTest {
                 DoubleDouble.mul(0.0, Double.NEGATIVE_INFINITY));
         assertEquals(DoubleDouble.valueOf(Double.NaN),
                 DoubleDouble.mul(-0.0, Double.NEGATIVE_INFINITY));
+
+        assertEquals(ONE, DoubleDouble.mul(1, 1));
+        assertEquals(DoubleDouble.valueOf(Long.MAX_VALUE), DoubleDouble.mul(Long.MAX_VALUE, 1));
+        assertEquals(DoubleDouble.valueOf(Long.MAX_VALUE), DoubleDouble.mul(1, Long.MAX_VALUE));
+        assertEquals(DoubleDouble.valueOf(StrictMath.pow(2, 126))
+                        .sub(StrictMath.pow(2, 64)),
+                DoubleDouble.mul(Long.MAX_VALUE, Long.MAX_VALUE));
     }
 
     public static void test014() {
