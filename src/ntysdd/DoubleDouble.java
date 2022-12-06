@@ -108,6 +108,10 @@ public final strictfp class DoubleDouble {
                 return this;
             }
         }
+        if (first == 0.0) {
+            double res = first + rhs;
+            return DoubleDouble.valueOf(res);
+        }
         if (Double.isNaN(first)) {
             return this;
         }
