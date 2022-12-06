@@ -16,12 +16,12 @@ import java.util.Objects;
  * 也不保证中间计算能保留所有精度，不保证计算结果正确到最后一位
  */
 public final strictfp class DoubleDouble {
-    public static final DoubleDouble ZERO = DoubleDouble.valueOf(0.0);
-    public static final DoubleDouble ONE = DoubleDouble.valueOf(1.0);
-    public static final DoubleDouble TWO = DoubleDouble.valueOf(2.0);
+    public static final DoubleDouble ZERO = new DoubleDouble(0.0, 0.0);
+    public static final DoubleDouble ONE = new DoubleDouble(1.0, 0.0);
+    public static final DoubleDouble TWO = new DoubleDouble(2.0, 0.0);
     // 在一个内部使用二进制小数的类里设置这样一个常量有点没有道理
     // 考虑到常用的BigDecimal类中有这个常量，这里也设置一下
-    public static final DoubleDouble TEN = DoubleDouble.valueOf(10.0);
+    public static final DoubleDouble TEN = new DoubleDouble(10.0, 0.0);
 
     private final double first;
     private final double second;
@@ -50,6 +50,18 @@ public final strictfp class DoubleDouble {
      * 将double转为DoubleDouble
      */
     public static DoubleDouble valueOf(double x) {
+        if (x == 1) {
+            return ONE;
+        }
+        if (x == 2) {
+            return TWO;
+        }
+        if (x == 10) {
+            return TEN;
+        }
+        if (Double.doubleToRawLongBits(x) == 0) {
+            return ZERO;
+        }
         return new DoubleDouble(x);
     }
 
