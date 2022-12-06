@@ -348,6 +348,41 @@ public final strictfp class DoubleDouble {
     }
 
     /**
+     * 计算一个DoubleDouble和一个DoubleDouble的积，返回DoubleDouble
+     */
+    public DoubleDouble mul(DoubleDouble rhs) {
+        if (rhs.second == 0 || Double.isNaN(rhs.first)
+                || Double.isInfinite(rhs.first)
+                || this.first == 0 || Double.isNaN(this.first)
+                || Double.isInfinite(this.first)) {
+            return this.mul(rhs.first);
+        }
+        if (this.second == 0) {
+            return rhs.mul(this.first);
+        }
+        double x1 = this.first;
+        double x2 = rhs.first;
+        double x3 = this.second;
+        double x4 = rhs.second;
+
+        DoubleDouble[] v = {
+                mul(x1, x2),
+                mul(x1, x4),
+                mul(x2, x3),
+                mul(x3, x4)
+        };
+        DoubleDouble sum = ZERO;
+        DoubleDouble c = ZERO;
+        for (DoubleDouble x : v) {
+            c = c.sub(x);
+            DoubleDouble s1 = sum.sub(c);
+            c = s1.sub(sum).add(c);
+            sum = s1;
+        }
+        return sum;
+    }
+
+    /**
      * 计算一个DoubleDouble和一个double的商，返回DoubleDouble
      */
     public DoubleDouble div(double rhs) {
