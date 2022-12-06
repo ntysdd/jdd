@@ -190,6 +190,9 @@ public class DoubleDoubleTest {
         assertEquals(POS_INF, POS_INF.add(POS_INF));
         assertEquals(NEG_INF, NEG_INF.add(NEG_INF));
 
+        assertEquals(POS_INF, DoubleDouble.valueOf(Long.MAX_VALUE).add(Double.POSITIVE_INFINITY));
+        assertEquals(NEG_INF, DoubleDouble.valueOf(Long.MAX_VALUE).add(Double.NEGATIVE_INFINITY));
+
         assertEquals(Double.toString(Double.POSITIVE_INFINITY), POS_INF.toString());
         assertEquals(Double.toString(Double.NEGATIVE_INFINITY), NEG_INF.toString());
     }
@@ -252,6 +255,8 @@ public class DoubleDoubleTest {
         assertEquals(NaN, DoubleDouble.add(Double.NaN, Double.POSITIVE_INFINITY));
         assertEquals(NaN, DoubleDouble.add(Double.NEGATIVE_INFINITY, Double.NaN));
         assertEquals(NaN, DoubleDouble.add(Double.NaN, Double.NEGATIVE_INFINITY));
+        assertEquals(NaN, DoubleDouble.valueOf(Long.MAX_VALUE).add(Double.NaN));
+        assertEquals(NaN, DoubleDouble.valueOf(-Long.MAX_VALUE).add(Double.NaN));
     }
 
     public static void test007() {
