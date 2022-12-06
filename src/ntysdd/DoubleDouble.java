@@ -596,6 +596,9 @@ public final strictfp class DoubleDouble {
             // this是NaN或者无穷，不需要考虑精度问题
             return this.div((double) rhs);
         }
+        if (this.equals(ONE)) {
+            return reciprocal(DoubleDouble.valueOf(rhs));
+        }
         // DoubleDouble和DoubleDouble的除法还没有实现
         // 先用BigDecimal来处理
         BigDecimal bd = this.toBigDecimal();
@@ -632,16 +635,17 @@ public final strictfp class DoubleDouble {
         double reciprocal0 = 1.0 / first;
         DoubleDouble reciprocal1 = DoubleDouble.ONE.sub(mul(reciprocal0, first)).div(first);
 
-        // 上面计算的倒数只考虑了value.first，用泰勒级数进行修正value.second的影响
+        // 上面计算的倒数只考虑了value.first，用泰勒级数修正value.second带来的的影响
         DoubleDouble eps = DoubleDouble.valueOf(second).div(first);
+        DoubleDouble epsDivFirst = eps.div(first);
         // 这一项已经很小，不需要很高精度
         double eps2 = eps.first * eps.first;
 
         double[] v = {reciprocal0,
-                -eps.div(first).first,
+                -epsDivFirst.first,
                 reciprocal1.first,
-                -eps.div(first).second,
-                eps2 / first,
+                -epsDivFirst.second,
+                eps2 * reciprocal0,
                 reciprocal1.second};
 
         DoubleDouble sum = ZERO;
