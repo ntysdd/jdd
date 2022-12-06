@@ -79,16 +79,12 @@ public final strictfp class DoubleDouble {
      * 计算两个double的和，结果表示为DoubleDouble
      */
     public static DoubleDouble add(double lhs, double rhs) {
-        double v1 = lhs;
-        double v2 = rhs;
-        if (Math.abs(v2) > Math.abs(v1)) {
-            double t = v2;
-            v2 = v1;
-            v1 = t;
+        double f = lhs + rhs;
+        if (Math.abs(lhs) >= Math.abs(rhs)) {
+            return new DoubleDouble(f, rhs - (f - lhs));
+        } else {
+            return new DoubleDouble(f, lhs - (f - rhs));
         }
-        double f = v1 + v2;
-        double s = (v1 - f) + v2;
-        return new DoubleDouble(f, s);
     }
 
     /**
