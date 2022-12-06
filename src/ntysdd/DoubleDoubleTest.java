@@ -525,10 +525,14 @@ public class DoubleDoubleTest {
         assertSameObject(ONE, ONE.add(zero));
         assertSameObject(ONE, ONE.add(0));
         assertSameObject(ONE, ONE.add(0.0));
+        assertSameObject(POS_INF, POS_INF.add(POS_INF));
+        assertSameObject(POS_INF, POS_INF.add(Double.POSITIVE_INFINITY));
         assertSameObject(POS_INF, zero.add(POS_INF));
         assertSameObject(POS_INF, POS_INF.add(zero));
         assertSameObject(POS_INF, POS_INF.add(0));
         assertSameObject(POS_INF, POS_INF.add(0.0));
+        assertSameObject(NEG_INF, NEG_INF.add(NEG_INF));
+        assertSameObject(NEG_INF, NEG_INF.add(Double.NEGATIVE_INFINITY));
         assertSameObject(NEG_INF, zero.add(NEG_INF));
         assertSameObject(NEG_INF, NEG_INF.add(zero));
         assertSameObject(NEG_INF, NEG_INF.add(0));
