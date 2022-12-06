@@ -122,9 +122,6 @@ public final strictfp class DoubleDouble {
             return DoubleDouble.valueOf(Double.NaN);
         }
         if (Double.isInfinite(first) || Double.isInfinite(rhs)) {
-            if (first == rhs) {
-                return this;
-            }
             return DoubleDouble.valueOf(first + rhs);
         }
         double second = this.second;
