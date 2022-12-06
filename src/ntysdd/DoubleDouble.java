@@ -112,6 +112,9 @@ public final strictfp class DoubleDouble {
             double res = first + rhs;
             return DoubleDouble.valueOf(res);
         }
+        if (this.second == 0) {
+            return DoubleDouble.add(first, rhs);
+        }
         if (Double.isNaN(first)) {
             return this;
         }
