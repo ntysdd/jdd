@@ -548,6 +548,24 @@ public final strictfp class DoubleDouble {
         return new DoubleDouble(f, s);
     }
 
+    public static DoubleDouble mul(long lhs, long rhs) {
+        if (canLongBeConvertedToDoubleExactly(rhs)) {
+            if (canLongBeConvertedToDoubleExactly(lhs)) {
+                return DoubleDouble.mul((double) lhs, (double) rhs);
+            }
+            return DoubleDouble.valueOf(lhs).mul((double) rhs);
+        }
+        return DoubleDouble.valueOf(rhs).mul(lhs);
+    }
+
+    public static DoubleDouble mul(long lhs, double rhs) {
+        return DoubleDouble.valueOf(lhs).mul(rhs);
+    }
+
+    public static DoubleDouble mul(double lhs, long rhs) {
+        return mul(rhs, lhs);
+    }
+
     public DoubleDouble div(long rhs) {
         if (canLongBeConvertedToDoubleExactly(rhs)) {
             return this.div((double) rhs);
