@@ -555,6 +555,29 @@ public class DoubleDoubleTest {
         assertSameObject(NEG_INF, NEG_INF.add(-0.0));
     }
 
+    public static void test016() {
+        DoubleDouble DD_LON_MAX = DoubleDouble.valueOf(Long.MAX_VALUE);
+        DoubleDouble zero = ZERO;
+        DoubleDouble POS_INF = DoubleDouble.valueOf(Double.POSITIVE_INFINITY);
+        DoubleDouble NEG_INF = DoubleDouble.valueOf(Double.NEGATIVE_INFINITY);
+
+        assertSameObject(DD_LON_MAX, DD_LON_MAX.mul(1));
+        assertSameObject(DD_LON_MAX, DD_LON_MAX.mul(1.0));
+        assertEquals(zero, zero.mul(1));
+        assertEquals(zero, zero.mul(0));
+        assertEquals(zero, zero.mul(1.0));
+        assertEquals(zero, zero.mul(Long.MAX_VALUE));
+
+
+        assertEquals(POS_INF, POS_INF.mul(1));
+        assertEquals(POS_INF, POS_INF.mul(10));
+        assertEquals(POS_INF, POS_INF.mul(Long.MAX_VALUE));
+
+        assertEquals(NEG_INF, NEG_INF.mul(1));
+        assertEquals(NEG_INF, NEG_INF.mul(10));
+        assertEquals(NEG_INF, NEG_INF.mul(Long.MAX_VALUE));
+    }
+
     public static void main(String[] args) throws Exception {
         Method[] methods = Arrays.stream(DoubleDoubleTest.class.getMethods())
                 .filter(m -> m.getName().matches("test[0-9]+")
