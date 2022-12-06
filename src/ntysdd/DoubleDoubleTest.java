@@ -19,6 +19,15 @@ public class DoubleDoubleTest {
             throw new AssertionError();
         }
 
+        assertSameObject(ZERO, DoubleDouble.valueOf(0));
+        assertSameObject(ZERO, DoubleDouble.valueOf(0.0));
+        assertSameObject(ONE, DoubleDouble.valueOf(1));
+        assertSameObject(ONE, DoubleDouble.valueOf(1.0));
+        assertSameObject(TWO, DoubleDouble.valueOf(2));
+        assertSameObject(TWO, DoubleDouble.valueOf(2.0));
+        assertSameObject(TEN, DoubleDouble.valueOf(10));
+        assertSameObject(TEN, DoubleDouble.valueOf(10.0));
+
         assertEquals(NEG_ZERO, ZERO.neg());
         if (!NEG_ZERO.toString().startsWith("-")) {
             throw new AssertionError();
