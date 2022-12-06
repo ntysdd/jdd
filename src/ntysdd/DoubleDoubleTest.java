@@ -150,6 +150,14 @@ public class DoubleDoubleTest {
         assertEquals(NEG_INF, POS_INF.neg());
         assertEquals(POS_INF, NEG_INF.neg());
 
+        assertEquals(POS_INF, DoubleDouble.add(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY));
+        assertEquals(NEG_INF,
+                DoubleDouble.add(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY));
+        assertEquals(DoubleDouble.valueOf(Double.NaN),
+                DoubleDouble.add(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
+        assertEquals(DoubleDouble.valueOf(Double.NaN),
+                DoubleDouble.add(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY));
+
         assertEquals(POS_INF, POS_INF.add(ZERO));
         assertEquals(POS_INF, POS_INF.add(0.0));
         assertEquals(POS_INF, POS_INF.add(NEG_ZERO));
