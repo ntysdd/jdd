@@ -80,6 +80,9 @@ public final strictfp class DoubleDouble {
      */
     public static DoubleDouble add(double lhs, double rhs) {
         double f = lhs + rhs;
+        if (Math.abs(f) == Double.POSITIVE_INFINITY) {
+            return new DoubleDouble(f);
+        }
         if (Math.abs(lhs) >= Math.abs(rhs)) {
             return new DoubleDouble(f, rhs - (f - lhs));
         } else {
