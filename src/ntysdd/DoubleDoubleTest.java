@@ -508,6 +508,37 @@ public class DoubleDoubleTest {
         assertEquals(DoubleDouble.valueOf(Double.NaN), NEG_INF.div(Double.NEGATIVE_INFINITY));
     }
 
+    public static void test015() {
+        DoubleDouble zero = DoubleDouble.valueOf(0);
+        DoubleDouble negZero = DoubleDouble.valueOf(-0.0);
+        DoubleDouble POS_INF = valueOf(Double.POSITIVE_INFINITY);
+        DoubleDouble NEG_INF = valueOf(Double.NEGATIVE_INFINITY);
+
+        assertSameObject(zero, zero.add(0.0));
+        assertSameObject(zero, zero.add(-0.0));
+        assertSameObject(zero, zero.add(0));
+        assertSameObject(zero, zero.add(ZERO));
+        assertSameObject(zero, zero.add(negZero));
+        assertSameObject(zero, negZero.add(zero));
+
+        assertSameObject(ONE, zero.add(ONE));
+        assertSameObject(ONE, ONE.add(zero));
+        assertSameObject(POS_INF, zero.add(POS_INF));
+        assertSameObject(POS_INF, POS_INF.add(zero));
+        assertSameObject(NEG_INF, zero.add(NEG_INF));
+        assertSameObject(NEG_INF, NEG_INF.add(zero));
+
+        assertSameObject(negZero, negZero.add(-0.0));
+        assertSameObject(negZero, negZero.add(DoubleDouble.valueOf(-0.0)));
+
+        assertSameObject(ONE, negZero.add(ONE));
+        assertSameObject(ONE, ONE.add(negZero));
+        assertSameObject(POS_INF, negZero.add(POS_INF));
+        assertSameObject(POS_INF, POS_INF.add(negZero));
+        assertSameObject(NEG_INF, negZero.add(NEG_INF));
+        assertSameObject(NEG_INF, NEG_INF.add(negZero));
+    }
+
     public static void main(String[] args) throws Exception {
         Method[] methods = Arrays.stream(DoubleDoubleTest.class.getMethods())
                 .filter(m -> m.getName().matches("test[0-9]+")
@@ -525,6 +556,17 @@ public class DoubleDoubleTest {
             throw new AssertionError(msg);
         }
         if (expected != null && !expected.equals(actual)) {
+            String msg = "expected: " + expected + ", actual: " + actual;
+            throw new AssertionError(msg);
+        }
+    }
+
+    private static void assertSameObject(Object expected, Object actual) {
+        if (expected == null) {
+            String msg = "expected should not be null";
+            throw new AssertionError(msg);
+        }
+        if (expected != actual) {
             String msg = "expected: " + expected + ", actual: " + actual;
             throw new AssertionError(msg);
         }
