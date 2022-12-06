@@ -593,16 +593,7 @@ public final strictfp class DoubleDouble {
             // this是NaN或者无穷，不需要考虑精度问题
             return this.mul((double) rhs);
         }
-        // DoubleDouble和DoubleDouble的乘法还没有实现
-        // 先用BigDecimal来处理
-        BigDecimal bd = this.toBigDecimal();
-        bd = bd.multiply(BigDecimal.valueOf(rhs));
-        double f = bd.doubleValue();
-        double s = bd.subtract(new BigDecimal(f)).doubleValue();
-        if (f == 0) {
-            return this.mul(Math.copySign(0, rhs));
-        }
-        return new DoubleDouble(f, s);
+        return this.mul(valueOf(rhs));
     }
 
     public static DoubleDouble mul(long lhs, long rhs) {
