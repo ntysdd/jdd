@@ -628,11 +628,13 @@ public final strictfp class DoubleDouble {
             return DoubleDouble.valueOf(Double.NaN);
         }
 
+        // reciprocal0和reciprocal1共有1.0 / first的大约53 * 3 = 159位二进制数
         double reciprocal0 = 1.0 / first;
         DoubleDouble reciprocal1 = DoubleDouble.ONE.sub(mul(reciprocal0, first)).div(first);
 
+        // 上面计算的倒数只考虑了value.first，用泰勒级数进行修正value.second的影响
         DoubleDouble eps = DoubleDouble.valueOf(second).div(first);
-
+        // 这一项已经很小，不需要很高精度
         double eps2 = eps.first * eps.first;
 
         double[] v = {reciprocal0,
