@@ -374,9 +374,9 @@ public final strictfp class DoubleDouble {
         DoubleDouble sum = ZERO;
         DoubleDouble c = ZERO;
         for (DoubleDouble x : v) {
-            c = c.sub(x);
-            DoubleDouble s1 = sum.sub(c);
-            c = s1.sub(sum).add(c);
+            c = c.add(x);
+            DoubleDouble s1 = sum.add(c);
+            c = c.sub(s1.sub(sum));
             sum = s1;
         }
         return sum;
