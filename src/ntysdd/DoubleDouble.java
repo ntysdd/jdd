@@ -609,6 +609,32 @@ public final strictfp class DoubleDouble {
         return k.add(k2).add(f);
     }
 
+    public static DoubleDouble sqrt(double value) {
+        if (value == 0) {
+            // 这里要注意±0问题
+            if (Double.doubleToRawLongBits(value) == 0) {
+                return ZERO;
+            }
+            return DoubleDouble.valueOf(value);
+        }
+        if (value == 1) {
+            return ONE;
+        }
+        double f0 = Math.sqrt(value);
+        if (!(Double.isFinite(f0))) {
+            return DoubleDouble.valueOf(f0);
+        }
+        DoubleDouble k = mul(f0, f0);
+        double t = k.sub(value).first;
+        if (t == 0) {
+            return DoubleDouble.valueOf(f0);
+        }
+
+        DoubleDouble eps = DoubleDouble.valueOf(t).div(f0).mul(-0.5);
+        double eps2 = t * t / (k.first * f0) * (1.0 / -8.0);
+        return eps.add(eps2).add(f0);
+    }
+
     private DoubleDouble(double first, double second) {
         if (Double.isNaN(first) || Double.isNaN(second)) {
             this.first = Double.NaN;
