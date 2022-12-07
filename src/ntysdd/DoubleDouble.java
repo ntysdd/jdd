@@ -565,7 +565,12 @@ public final strictfp class DoubleDouble {
             s2 = t.second;
             s1 = t.first;
         }
-        return add(s1, s2).add(s3);
+        DoubleDouble res = add(s1, s2).add(s3);
+        if (res.getFirst() == 0) {
+            // 需要考虑±0的问题
+            return DoubleDouble.valueOf(Math.copySign(0, this.first) * Math.copySign(0, rhs.first));
+        }
+        return res;
     }
 
     /**
