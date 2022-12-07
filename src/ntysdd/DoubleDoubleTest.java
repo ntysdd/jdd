@@ -347,6 +347,7 @@ public class DoubleDoubleTest {
         final DoubleDouble NEG_INF = DoubleDouble.valueOf(Double.NEGATIVE_INFINITY);
 
         assertEquals(POS_INF, DoubleDouble.reciprocal(0.0));
+        assertEquals(ONE.div(4.4E-323), DoubleDouble.reciprocal(4.4E-323));
         assertEquals(POS_INF, DoubleDouble.valueOf(100).div(0.0));
         assertEquals(POS_INF, DoubleDouble.valueOf(-100).div(-0.0));
         assertEquals(POS_INF, DoubleDouble.reciprocal(0));
