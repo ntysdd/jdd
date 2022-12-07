@@ -6,6 +6,9 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Objects;
 
 /**
@@ -292,15 +295,35 @@ public final strictfp class DoubleDouble {
         }
         double x3 = this.second;
         double x4 = rhs.second;
-        DoubleDouble t1 = add(x1, x2);
-        DoubleDouble t2 = add(t1.second, x3);
-        DoubleDouble t3 = add(t1.first, t2.first);
-        DoubleDouble t4 = add(t2.second, t3.second);
-        DoubleDouble t5 = add(t3.first, x4);
-        DoubleDouble t6 = add(t5.second, t4.first);
-        double t7 = t6.second + t4.second;
-        DoubleDouble t8 = add(t7, t6.first);
-        return add(t5.first, t8.first);
+
+        double[] v = {x1, x2, x3, x4};
+        sortByMaxAbs(v);
+
+        double s1 = 0;
+        double s2 = 0;
+        double s3 = 0;
+
+        for (double x : v) {
+            s3 += x;
+            DoubleDouble t = add(s2, s3);
+            s3 = t.second;
+            s2 = t.first;
+            t = add(s1, s2);
+            s2 = t.second;
+            s1 = t.first;
+        }
+        return new DoubleDouble(s1, s2).add(s3);
+    }
+
+    private static void sortByMaxAbs(double[] v) {
+        Double[] t = new Double[v.length];
+        for (int i = 0; i < v.length; i++) {
+            t[i] = v[i];
+        }
+        Arrays.sort(t, Comparator.comparing(x -> -Math.abs(x)));
+        for (int i = 0; i < v.length; i++) {
+            v[i] = t[i];
+        }
     }
 
     /**
