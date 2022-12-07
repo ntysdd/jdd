@@ -1,8 +1,11 @@
 package ntysdd;
 
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Objects;
+import java.util.Random;
 
 import static ntysdd.DoubleDouble.*;
 
@@ -585,6 +588,49 @@ public class DoubleDoubleTest {
         assertEquals(NEG_INF, NEG_INF.mul(1));
         assertEquals(NEG_INF, NEG_INF.mul(10));
         assertEquals(NEG_INF, NEG_INF.mul(Long.MAX_VALUE));
+    }
+
+    public static void test999() {
+        Random random = new Random(0);
+        long count = 0;
+        for (int i = 0; i < 10000; i++) {
+            double r1 = random.nextDouble();
+            double r2 = random.nextDouble();
+            double r3 = random.nextDouble() / StrictMath.pow(2, 53);
+            double r4 = random.nextDouble() / StrictMath.pow(2, 53);
+
+            DoubleDouble d1 = DoubleDouble.add(r1, r3);
+            DoubleDouble d2 = DoubleDouble.add(r2, r4);
+            if(!Objects.equals(refAdd(d1, d2), d1.add(d2))) {
+                count++;
+            }
+            if(!Objects.equals(refSub(d1, d2), d1.sub(d2))) {
+                count++;
+            }
+        }
+        assertEquals(0L, count);
+    }
+
+    private static DoubleDouble refAdd(DoubleDouble d1, DoubleDouble d2) {
+        if (Double.doubleToRawLongBits(-0.0) == Double.doubleToRawLongBits(d1.getFirst())
+                && Double.doubleToRawLongBits(-0.0) == Double.doubleToRawLongBits(d2.getFirst())) {
+            return DoubleDouble.valueOf(-0.0);
+        }
+        return fromBigDecimal(d1.toBigDecimal().add(d2.toBigDecimal()));
+    }
+
+    private static DoubleDouble refSub(DoubleDouble d1, DoubleDouble d2) {
+        if (Double.doubleToRawLongBits(-0.0) == Double.doubleToRawLongBits(d1.getFirst())
+                && Double.doubleToRawLongBits(0.0) == Double.doubleToRawLongBits(d2.getFirst())) {
+            return DoubleDouble.valueOf(-0.0);
+        }
+        return fromBigDecimal(d1.toBigDecimal().subtract(d2.toBigDecimal()));
+    }
+
+    private static DoubleDouble fromBigDecimal(BigDecimal bd) {
+        double f1 = bd.doubleValue();
+        double f2 = bd.subtract(new BigDecimal(f1)).doubleValue();
+        return DoubleDouble.add(f1, f2);
     }
 
     public static void main(String[] args) throws Exception {
