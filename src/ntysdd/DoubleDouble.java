@@ -529,6 +529,12 @@ public final strictfp class DoubleDouble {
             this.first = Double.NaN;
             this.second = Double.NaN;
         } else {
+            if (first == 0 && second != 0) {
+                throw new AssertionError();
+            }
+            if (first + second != first) {
+                throw new AssertionError();
+            }
             // assert Math.abs(first) > Math.abs(second) || first == 0 && second == 0
             if (first == 0 || second == 0) {
                 this.first = first;
