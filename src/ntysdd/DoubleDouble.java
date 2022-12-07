@@ -474,8 +474,8 @@ public final strictfp class DoubleDouble {
             return this.mul(1.0 / rhs);
         }
         double r1 = first / rhs;
-        if (Double.isNaN(r1)) {
-            return new DoubleDouble(Double.NaN);
+        if (!Double.isFinite(r1)) {
+            return new DoubleDouble(r1);
         }
         DoubleDouble m = mul(r1, rhs);
         DoubleDouble r = m.neg().add(first);
