@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -312,10 +311,33 @@ public final strictfp class DoubleDouble {
             s2 = t.second;
             s1 = t.first;
         }
-        return new DoubleDouble(s1, s2).add(s3);
+        v[0] = s1;
+        v[1] = s2;
+        v[2] = s3;
+        v[3] = 0;
+        sortByMaxAbs(v);
+        return new DoubleDouble(v[0], v[1]).add(v[2]);
     }
 
     private static void sortByMaxAbs(double[] v) {
+        OUT:
+        if (v.length <= 15) {
+            for (int i = 0; i < v.length; i++) {
+                double val = v[i];
+                if (Double.isNaN(val)) {
+                    break OUT;
+                }
+                double key = Math.abs(val);
+                int j = i - 1;
+                while (j >= 0 && Math.abs(v[j]) < key) {
+                    v[j + 1] = v[j];
+                    j--;
+                }
+                v[j + 1] = val;
+            }
+            return;
+        }
+
         Double[] t = new Double[v.length];
         for (int i = 0; i < v.length; i++) {
             t[i] = v[i];
