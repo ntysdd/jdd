@@ -296,7 +296,7 @@ public final strictfp class DoubleDouble {
         double x4 = rhs.second;
 
         double[] v = {x1, x2, x3, x4};
-        sortByMaxAbs(v);
+        sortByAbsMaxFirst(v);
 
         double s1 = 0;
         double s2 = 0;
@@ -314,13 +314,21 @@ public final strictfp class DoubleDouble {
         return add(s1, s2).add(s3);
     }
 
-    public static void sortByMaxAbs(double[] v) {
+    /*
+     * 将数组按照绝对值排序，绝对值最大的排在最开头，绝对值最小的排在最末尾
+     * 对于不含NaN小数组，采用插排
+     * 对于大数组，交给Arrays.sort(T[], Comparator)排序
+     */
+    private static void sortByAbsMaxFirst(double[] v) {
         OUT:
         if (v.length <= 15) {
             for (int i = 0; i < v.length; i++) {
                 double val = v[i];
                 if (Double.isNaN(val)) {
                     break OUT;
+                }
+                if (i == 0) {
+                    continue;
                 }
                 double key = Math.abs(val);
                 int j = i - 1;
