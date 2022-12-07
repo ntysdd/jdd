@@ -602,6 +602,8 @@ public class DoubleDoubleTest {
 
             DoubleDouble d1 = DoubleDouble.add(r1, r3);
             DoubleDouble d2 = DoubleDouble.add(r2, r4);
+            int shift = random.nextInt(30);
+            d2 = d2.mul(StrictMath.pow(2, -shift));
             if (!Objects.equals(refAdd(d1, d2), d1.add(d2))) {
                 count++;
             }
