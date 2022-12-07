@@ -2,6 +2,7 @@ package ntysdd;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
@@ -601,10 +602,13 @@ public class DoubleDoubleTest {
 
             DoubleDouble d1 = DoubleDouble.add(r1, r3);
             DoubleDouble d2 = DoubleDouble.add(r2, r4);
-            if(!Objects.equals(refAdd(d1, d2), d1.add(d2))) {
+            if (!Objects.equals(refAdd(d1, d2), d1.add(d2))) {
                 count++;
             }
-            if(!Objects.equals(refSub(d1, d2), d1.sub(d2))) {
+            if (!Objects.equals(refSub(d1, d2), d1.sub(d2))) {
+                count++;
+            }
+            if (!Objects.equals(refMul(d1, d2), d1.mul(d2))) {
                 count++;
             }
         }
@@ -625,6 +629,15 @@ public class DoubleDoubleTest {
             return DoubleDouble.valueOf(-0.0);
         }
         return fromBigDecimal(d1.toBigDecimal().subtract(d2.toBigDecimal()));
+    }
+
+    private static DoubleDouble refMul(DoubleDouble d1, DoubleDouble d2) {
+        return fromBigDecimal(d1.toBigDecimal().multiply(d2.toBigDecimal()));
+    }
+
+    private static DoubleDouble refDiv(DoubleDouble d1, DoubleDouble d2) {
+        return fromBigDecimal(d1.toBigDecimal().divide(
+                d2.toBigDecimal(), new MathContext(40 * 3 + 10)));
     }
 
     private static DoubleDouble fromBigDecimal(BigDecimal bd) {
