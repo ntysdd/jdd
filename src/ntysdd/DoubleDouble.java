@@ -860,6 +860,27 @@ public final strictfp class DoubleDouble {
         return sum;
     }
 
+    public static DoubleDouble sqrt(long value) {
+        if (canLongBeConvertedToDoubleExactly(value)) {
+            return sqrt((double) value);
+        }
+        if (value < 0) {
+            return DoubleDouble.valueOf(Double.NaN);
+        }
+        // 暂时用BigDecimal来实现
+        double v = Math.sqrt((double) value);
+        BigDecimal bd = new BigDecimal(v).round(new MathContext(20));
+        BigDecimal bdValue = new BigDecimal(value);
+        BigDecimal half = new BigDecimal("0.5");
+        bd = bd.add(bdValue.divide(bd, new MathContext(42)))
+                .multiply(half);
+        bd = bd.add(bdValue.divide(bd, new MathContext(60)))
+                .multiply(half, new MathContext(60));
+        double f1 = bd.doubleValue();
+        double f2 = bd.subtract(new BigDecimal(f1)).doubleValue();
+        return new DoubleDouble(f1, f2);
+    }
+
     private static final long POW_2_53 = (long) StrictMath.pow(2, 53);
 
     private static boolean canLongBeConvertedToDoubleExactly(long x) {
