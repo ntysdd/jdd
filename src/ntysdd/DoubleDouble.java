@@ -311,15 +311,10 @@ public final strictfp class DoubleDouble {
             s2 = t.second;
             s1 = t.first;
         }
-        v[0] = s1;
-        v[1] = s2;
-        v[2] = s3;
-        v[3] = 0;
-        sortByMaxAbs(v);
-        return new DoubleDouble(v[0], v[1]).add(v[2]);
+        return add(s1, s2).add(s3);
     }
 
-    private static void sortByMaxAbs(double[] v) {
+    public static void sortByMaxAbs(double[] v) {
         OUT:
         if (v.length <= 15) {
             for (int i = 0; i < v.length; i++) {
