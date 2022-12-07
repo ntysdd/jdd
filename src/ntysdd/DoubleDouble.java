@@ -458,19 +458,19 @@ public final strictfp class DoubleDouble {
             return new DoubleDouble(f, 0);
         }
 
+        double r;
         if (FMA_METHOD != null) {
-            double r;
             try {
                 r = (double) FMA_METHOD.invokeExact(f, -value, 1.0);
             } catch (Throwable e) {
                 throw new AssertionError(e);
             }
-            DoubleDouble k = mul(f, r);
-            double k2 = k.first * r;
-            return k.add(k2).add(f);
+        } else {
+            r = mul(f, -value).add(ONE).first;
         }
-
-        return DoubleDouble.ONE.div(value);
+        DoubleDouble k = mul(f, r);
+        double k2 = k.first * r;
+        return k.add(k2).add(f);
     }
 
     private DoubleDouble(double first, double second) {
