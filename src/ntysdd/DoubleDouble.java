@@ -489,6 +489,69 @@ public final strictfp class DoubleDouble {
     }
 
     /**
+     * 计算一个DoubleDouble和一个DoubleDouble的商，返回DoubleDouble
+     */
+    public DoubleDouble div(DoubleDouble rhs) {
+        if (rhs.second == 0 || Double.isNaN(rhs.first)
+                || Double.isInfinite(rhs.first)
+                || this.first == 0 || Double.isNaN(this.first)
+                || Double.isInfinite(this.first)) {
+            return this.div(rhs.first);
+        }
+        if (ONE.equals(this)) {
+            return reciprocal(rhs);
+        }
+
+        double f = 1.0 / rhs.first;
+        DoubleDouble rn = rhs.mul(-f).add(ONE);
+        DoubleDouble r1 = rn.mul(f);
+        DoubleDouble r2 = rn.mul(rn).mul(f);
+
+        double x1 = r1.first;
+        double x2 = r2.first;
+        double x3 = r1.second;
+        double x4 = r2.second;
+        double x5 = f;
+
+        double t1 = this.first;
+        double t2 = this.second;
+
+        DoubleDouble[] parts = {
+                mul(x1, t1),
+                mul(x2, t1),
+                mul(x3, t1),
+                mul(x4, t1),
+                mul(x5, t1),
+                mul(x1, t2),
+                mul(x2, t2),
+                mul(x3, t2),
+                mul(x4, t2),
+                mul(x5, t2),
+        };
+        double[] v = new double[parts.length * 2];
+        for (int i = 0; i < parts.length; i++) {
+            DoubleDouble dd = parts[i];
+            v[i] = dd.first;
+            v[i + parts.length] = dd.second;
+        }
+        sortByAbsMaxFirst(v);
+        double s1 = 0;
+        double s2 = 0;
+        double s3 = 0;
+
+        for (double x : v) {
+            s3 += x;
+            DoubleDouble t = add(s2, s3);
+            s3 = t.second;
+            s2 = t.first;
+            t = add(s1, s2);
+            s2 = t.second;
+            s1 = t.first;
+        }
+        return add(s1, s2).add(s3);
+    }
+
+    /**
      * 计算一个double的倒数
      */
     public static DoubleDouble reciprocal(double value) {
