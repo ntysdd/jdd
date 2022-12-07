@@ -779,16 +779,7 @@ public final strictfp class DoubleDouble {
         if (this.equals(ONE)) {
             return reciprocal(DoubleDouble.valueOf(rhs));
         }
-        // DoubleDouble和DoubleDouble的除法还没有实现
-        // 先用BigDecimal来处理
-        BigDecimal bd = this.toBigDecimal();
-        bd = bd.divide(BigDecimal.valueOf(rhs), new MathContext(100, RoundingMode.HALF_EVEN));
-        double f = bd.doubleValue();
-        double s = bd.subtract(new BigDecimal(f)).doubleValue();
-        if (f == 0) {
-            return this.mul(Math.copySign(0, rhs));
-        }
-        return new DoubleDouble(f, s);
+        return this.div(valueOf(rhs));
     }
 
     public static DoubleDouble reciprocal(long value) {
