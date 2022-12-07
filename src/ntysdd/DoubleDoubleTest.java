@@ -614,6 +614,9 @@ public class DoubleDoubleTest {
             if (!Objects.equals(refMul(d1, d2), d1.mul(d2))) {
                 count++;
             }
+            if (!Objects.equals(refDiv(d1, d2), d1.div(d2))) {
+                count++;
+            }
         }
         assertEquals(0L, count);
     }
