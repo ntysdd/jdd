@@ -502,46 +502,63 @@ public final strictfp class DoubleDouble {
             return reciprocal(rhs);
         }
 
-        double f = 1.0 / rhs.first;
-        DoubleDouble rn = rhs.mul(-f).add(ONE);
-        DoubleDouble r1 = rn.mul(f);
-        DoubleDouble r2 = rn.mul(rn).mul(f);
+        // reciprocal0和reciprocal1共有1.0 / first的大约53 * 3 = 159位二进制数
+        double reciprocal0 = 1.0 / rhs.first;
+        DoubleDouble reciprocal1 = DoubleDouble.ONE.sub(mul(reciprocal0, rhs.first)).div(rhs.first);
 
-        double x1 = r1.first;
-        double x2 = r2.first;
-        double x3 = r1.second;
-        double x4 = r2.second;
-        double x5 = f;
+        // 上面计算的倒数只考虑了first，用泰勒级数修正second带来的的影响
+        DoubleDouble eps = DoubleDouble.valueOf(rhs.second).div(rhs.first);
+        DoubleDouble epsDivFirst = eps.div(rhs.first);
+        // 这一项已经很小，不需要很高精度
+        double eps2 = eps.first * eps.first;
+
+        double[] v = {reciprocal0,
+                -epsDivFirst.first,
+                reciprocal1.first,
+                -epsDivFirst.second,
+                eps2 * reciprocal0,
+                reciprocal1.second};
+        sortByAbsMaxFirst(v);
+        double s1 = 0;
+        double s2 = 0;
+        double s3 = 0;
+        for (double x : v) {
+            DoubleDouble t;
+            s3 += x;
+            t = add(s2, s3);
+            s3 = t.second;
+            s2 = t.first;
+            t = add(s1, s2);
+            s2 = t.second;
+            s1 = t.first;
+        }
 
         double t1 = this.first;
         double t2 = this.second;
 
         DoubleDouble[] parts = {
-                mul(x1, t1),
-                mul(x2, t1),
-                mul(x3, t1),
-                mul(x4, t1),
-                mul(x5, t1),
-                mul(x1, t2),
-                mul(x2, t2),
-                mul(x3, t2),
-                mul(x4, t2),
-                mul(x5, t2),
+                mul(s1, t1),
+                mul(s2, t1),
+                mul(s3, t1),
+                mul(s1, t2),
+                mul(s2, t2),
+                mul(s3, t2),
         };
-        double[] v = new double[parts.length * 2];
+        v = new double[parts.length * 2];
         for (int i = 0; i < parts.length; i++) {
             DoubleDouble dd = parts[i];
             v[i] = dd.first;
             v[i + parts.length] = dd.second;
         }
         sortByAbsMaxFirst(v);
-        double s1 = 0;
-        double s2 = 0;
-        double s3 = 0;
+        s1 = 0;
+        s2 = 0;
+        s3 = 0;
 
         for (double x : v) {
+            DoubleDouble t;
             s3 += x;
-            DoubleDouble t = add(s2, s3);
+            t = add(s2, s3);
             s3 = t.second;
             s2 = t.first;
             t = add(s1, s2);
