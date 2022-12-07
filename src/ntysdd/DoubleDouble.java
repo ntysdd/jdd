@@ -316,15 +316,17 @@ public final strictfp class DoubleDouble {
 
     /*
      * 将数组按照绝对值排序，绝对值最大的排在最开头，绝对值最小的排在最末尾
-     * 对于不含NaN小数组，采用插排
+     * 对于不含NaN的小数组，采用插排
      * 对于大数组，交给Arrays.sort(T[], Comparator)排序
      */
     private static void sortByAbsMaxFirst(double[] v) {
         OUT:
-        if (v.length <= 15) {
+        if (v.length <= 20) {
+            // 插排
             for (int i = 0; i < v.length; i++) {
                 double val = v[i];
                 if (Double.isNaN(val)) {
+                    // 发现含有NaN，则跳到外面，用Arrays.sort(T[], Comparator)来排序
                     break OUT;
                 }
                 if (i == 0) {
@@ -341,6 +343,7 @@ public final strictfp class DoubleDouble {
             return;
         }
 
+        // 为了能匹配API的签名，这里生成了很多包装对象
         Double[] t = new Double[v.length];
         for (int i = 0; i < v.length; i++) {
             t[i] = v[i];
