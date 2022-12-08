@@ -635,6 +635,26 @@ public final strictfp class DoubleDouble {
         return eps.add(eps2).add(f0);
     }
 
+    public static DoubleDouble cbrt(double value) {
+        if (value == 0) {
+            if (Double.doubleToRawLongBits(value) == 0) {
+                return ZERO;
+            }
+            return DoubleDouble.valueOf(value);
+        }
+        if (value == 1) {
+            return ONE;
+        }
+        double f0 = Math.cbrt(value);
+        if (!(Double.isFinite(f0))) {
+            return DoubleDouble.valueOf(f0);
+        }
+        DoubleDouble h = mul(f0, f0).mul(-f0).add(value).div(value);
+        DoubleDouble eps = h.mul(f0).div(3);
+        double eps2 = f0 * h.first * h.first * (2.0 / 9.0);
+        return eps.add(eps2).add(f0);
+    }
+
     private DoubleDouble(double first, double second) {
         if (Double.isNaN(first) || Double.isNaN(second)) {
             this.first = Double.NaN;
