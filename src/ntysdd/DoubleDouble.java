@@ -881,6 +881,17 @@ public final strictfp class DoubleDouble {
         return new DoubleDouble(f1, f2);
     }
 
+    public static DoubleDouble sqrt(DoubleDouble value) {
+        if (value.second == 0) {
+            return sqrt(value.first);
+        }
+        double x0 = Math.sqrt(value.first);
+        DoubleDouble h = mul(-x0, x0).add(value).div(value);
+        DoubleDouble eps = h.mul(x0 * 0.5);
+        double eps2 = 0.375 * x0 * h.first * h.first;
+        return eps.add(eps2).add(x0);
+    }
+
     private static final long POW_2_53 = (long) StrictMath.pow(2, 53);
 
     private static boolean canLongBeConvertedToDoubleExactly(long x) {
