@@ -904,6 +904,13 @@ public final strictfp class DoubleDouble {
         return sqrt(DoubleDouble.valueOf(value));
     }
 
+    public static DoubleDouble cbrt(long value) {
+        if (canLongBeConvertedToDoubleExactly(value)) {
+            return cbrt((double) value);
+        }
+        return cbrt(DoubleDouble.valueOf(value));
+    }
+
     public static DoubleDouble sqrt(DoubleDouble value) {
         if (value.second == 0) {
             return sqrt(value.first);
