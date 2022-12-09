@@ -5,7 +5,6 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
@@ -936,5 +935,340 @@ public final strictfp class DoubleDouble {
             return false;
         }
         return v == x;
+    }
+
+    private static class Triple {
+        double v1;
+        double v2;
+        double v3;
+
+        public Triple() {
+        }
+
+        public Triple(double x) {
+            this.v1 = x;
+            if (Double.isNaN(x)) {
+                this.v1 = Double.NaN;
+                this.v2 = Double.NaN;
+                this.v3 = Double.NaN;
+            }
+        }
+
+        public Triple(DoubleDouble x) {
+            this.v1 = x.first;
+            this.v2 = x.second;
+            if (Double.isNaN(x.first)) {
+                this.v1 = Double.NaN;
+                this.v2 = Double.NaN;
+                this.v3 = Double.NaN;
+            }
+        }
+
+        public Triple(Triple x) {
+            this.v1 = x.v1;
+            this.v2 = x.v2;
+            this.v3 = x.v3;
+        }
+
+        private static double fma(double a, double b, double c) {
+            if (FMA_METHOD != null) {
+                try {
+                    return (double) FMA_METHOD.invokeExact(a, b, c);
+                } catch (Throwable e) {
+                    throw new AssertionError(e);
+                }
+            }
+            return DoubleDouble.mul(a, b).add(c).getFirst();
+        }
+
+        // 用Triple来求和
+        // 注意会进行排序
+        public static Triple sum(double[] v) {
+            Triple res = new Triple();
+            OUT:
+            if (v.length != 0) {
+                DoubleDouble.sortByAbsMaxFirst(v);
+                if (Double.isNaN(v[v.length - 1])) {
+                    res.v1 = Double.NaN;
+                    res.v2 = Double.NaN;
+                    res.v3 = Double.NaN;
+                    break OUT;
+                }
+                double sum1 = 0;
+                double sum2 = 0;
+                double sum3 = 0;
+                for (double x : v) {
+                    if (x == 0) {
+                        // 因为前面按照绝对值排序了，所以后面都是0.0（或者NaN）
+                        break;
+                    }
+                    DoubleDouble t;
+                    sum3 += x;
+                    t = DoubleDouble.add(sum2, sum3);
+                    sum2 = t.getFirst();
+                    sum3 = t.getSecond();
+                    t = DoubleDouble.add(sum1, sum2);
+                    sum1 = t.getFirst();
+                    sum2 = t.getSecond();
+                }
+
+                res.v1 = sum1;
+                res.v2 = sum2;
+                res.v3 = sum3;
+            }
+            return res;
+        }
+
+        public static Triple mul(double x1, double x2, double x3) {
+            DoubleDouble t1 = DoubleDouble.mul(x1, x2);
+            DoubleDouble t2 = DoubleDouble.mul(t1.getFirst(), x3);
+            DoubleDouble t3 = DoubleDouble.mul(t1.getSecond(), x3);
+            double[] v = { t2.getFirst(),
+                    t3.getFirst(),
+                    t2.getSecond(),
+                    t3.getSecond()
+            };
+            return sum(v);
+        }
+
+        public void dirtyMul(double m) {
+            DoubleDouble d1 = DoubleDouble.mul(this.v1, m);
+            DoubleDouble d2 = DoubleDouble.mul(this.v2, m);
+            DoubleDouble d3 = DoubleDouble.mul(this.v3, m);
+            double[] v = {
+                    d1.getFirst(),
+                    d2.getFirst(),
+                    d1.getSecond(),
+                    d2.getSecond(),
+                    d3.getFirst(),
+                    d3.getSecond()
+            };
+            Triple sum = sum(v);
+            this.v1 = sum.v1;
+            this.v2 = sum.v2;
+            this.v3 = sum.v3;
+        }
+
+        public void dirtyAdd(double x) {
+            DoubleDouble t1 = DoubleDouble.add(x, this.v1);
+            if (t1.getSecond() == 0 && Math.abs(t1.getFirst()) >= Math.abs(this.v1)) {
+                this.v1 = t1.getFirst();
+                return;
+            }
+            DoubleDouble t2 = DoubleDouble.add(this.v2, t1.getSecond());
+            double t3 = t2.getSecond() + this.v3;
+            DoubleDouble t4 = DoubleDouble.add(t2.getFirst(), t3);
+
+            DoubleDouble r1 = DoubleDouble.add(t1.getFirst(), t4.getFirst());
+            DoubleDouble r2 = DoubleDouble.add(r1.getSecond(), t4.getSecond());
+
+            this.v1 = r1.getFirst();
+            this.v2 = r2.getFirst();
+            this.v3 = r2.getSecond();
+        }
+
+        public void dirtyDiv(double d) {
+            double r1 = this.v1 / d;
+            double k = fma(-d, r1, this.v1);
+            DoubleDouble t = DoubleDouble.add(this.v2, k);
+            double k2 = t.getSecond() + this.v3;
+            DoubleDouble t2 = DoubleDouble.add(t.getFirst(), k2);
+
+            double r2 = t2.getFirst() / d;
+            k = fma(-d, r2, t2.getFirst());
+
+            double r3 = (k + t2.getSecond()) / d;
+
+            this.v1 = r1;
+            this.v2 = r2;
+            this.v3 = r3;
+        }
+
+        // 计算1/(1+x)-1
+        public static Triple reciprocal1p(double x) {
+            double r1 = Math.expm1(-Math.log1p(x));
+            DoubleDouble r1p1 = DoubleDouble.add(1.0, r1);
+            DoubleDouble xp1 = DoubleDouble.add(1.0, x);
+            Triple h = new Triple(r1p1);
+            h.dirtyMul(new Triple(xp1));
+            h.dirtyAdd(-1);
+            h.v1 *= -1;
+            h.v2 *= -1;
+            h.v3 *= -1;
+
+            double h2 = h.v1 * h.v1;
+
+            h.dirtyMul(new Triple(r1p1));
+
+            h.dirtyAdd(h2 * (r1 + 1));
+            h.dirtyAdd(r1);
+
+            return h;
+        }
+
+        public void dirtyMul(Triple rhs) {
+            // 注意最后再修改，防止参数被意外修改
+            DoubleDouble d1 = DoubleDouble.mul(this.v1, rhs.v1);
+            DoubleDouble d2 = DoubleDouble.mul(this.v1, rhs.v2);
+            DoubleDouble d3 = DoubleDouble.mul(this.v1, rhs.v3);
+            DoubleDouble d4 = DoubleDouble.mul(this.v2, rhs.v1);
+            DoubleDouble d5 = DoubleDouble.mul(this.v2, rhs.v2);
+            DoubleDouble d6 = DoubleDouble.mul(this.v2, rhs.v3);
+            DoubleDouble d7 = DoubleDouble.mul(this.v3, rhs.v1);
+            DoubleDouble d8 = DoubleDouble.mul(this.v3, rhs.v2);
+            DoubleDouble d9 = DoubleDouble.mul(this.v3, rhs.v3);
+            double[] v = {
+                    d1.getFirst(),
+                    d2.getFirst(),
+                    d4.getFirst(),
+                    d1.getSecond(),
+                    d5.getFirst(),
+                    d4.getSecond(),
+                    d2.getSecond(),
+                    d5.getSecond(),
+                    d3.getFirst(),
+                    d3.getSecond(),
+                    d6.getFirst(),
+                    d7.getFirst(),
+                    d6.getSecond(),
+                    d7.getSecond(),
+                    d8.getFirst(),
+                    d8.getSecond(),
+                    d9.getFirst(),
+                    d9.getSecond()
+            };
+            Triple sum = sum(v);
+            this.v1 = sum.v1;
+            this.v2 = sum.v2;
+            this.v3 = sum.v3;
+        }
+
+        public void sqrt() {
+            double v1 = this.v1;
+            double r1 = Math.sqrt(v1);
+            double h1 = fma(-r1, r1, v1);
+            DoubleDouble t = DoubleDouble.add(h1, this.v2);
+            Triple h = new Triple(t);
+            h.dirtyAdd(this.v3);
+            Triple h2 = new Triple(h);
+            h2.dirtyMul(h2);
+
+            h.dirtyDiv(r1);
+            h.v1 *= 0.5;
+            h.v2 *= 0.5;
+            h.v3 *= 0.5;
+
+            h2.dirtyDiv(r1);
+            h2.dirtyDiv(r1);
+            h2.dirtyDiv(r1);
+            h2.v1 *= -0.125;
+            h2.v2 *= -0.125;
+            h2.v3 *= -0.125;
+
+
+            this.v1 = r1;
+            this.v2 = 0;
+            this.v3 = 0;
+
+            this.dirtyAdd(h.v1);
+            this.dirtyAdd(h.v2);
+            this.dirtyAdd(h.v3);
+
+            this.dirtyAdd(h2.v1);
+            this.dirtyAdd(h2.v2);
+            this.dirtyAdd(h2.v3);
+        }
+
+        public BigDecimal toBigDecimal() {
+            return new BigDecimal(v1)
+                    .add(new BigDecimal(v2))
+                    .add(new BigDecimal(v3))
+                    .stripTrailingZeros();
+        }
+
+        @Override
+        public String toString() {
+            if (Double.isNaN(this.v1) || Double.isNaN(this.v2) || Double.isNaN(this.v3)) {
+                return Double.toString(Double.NaN);
+            }
+            if (Double.isInfinite(this.v1) || Double.isInfinite(this.v2) || Double.isInfinite(this.v3)) {
+                return Double.toString(this.v1 + this.v2 + this.v3);
+            }
+            BigDecimal bd = toBigDecimal();
+            return bd.round(new MathContext(51))
+                    .stripTrailingZeros()
+                    .toString();
+        }
+    }
+
+    private static class Log {
+        private static final double[] coefficients = {
+                20564.141339293772,
+                -0.40742573671663634,
+                0.2857174507900288,
+                -1.20149472161068E-11,
+                0.4,
+                -1.5906358982810946E-23,
+        };
+
+        public static Triple log1p(double value) {
+            if (!(0 <= value && value <= 1)) {
+                throw new AssertionError();
+            }
+            Triple vt = new Triple(value);
+            vt.dirtyAdd(1);
+            for (int i = 0; i < 16; i++) {
+                vt.sqrt();
+            }
+            vt.dirtyAdd(-1);
+            double value1 = vt.v1;
+            vt.dirtyAdd(1);
+            double x = value1 / (2 + value1);
+
+            Triple tInv = new Triple(DoubleDouble.add(1, -x));
+            Triple reciprocalX = Triple.reciprocal1p(x);
+            reciprocalX.dirtyAdd(1);
+            tInv.dirtyMul(reciprocalX);
+
+            Triple vtMulInv = new Triple(vt);
+            vtMulInv.dirtyMul(tInv);
+
+            Triple s2 = Triple.mul(x, x, x);
+            s2.dirtyDiv(3);
+
+            DoubleDouble t1 = DoubleDouble.mul(x, coefficients[0]);
+            Triple k = new Triple(t1);
+            k.dirtyAdd(coefficients[1]);
+
+            for (int i = 2, coefficientsLength = coefficients.length; i < coefficientsLength; i++) {
+                double c = coefficients[i];
+                k.dirtyMul(x);
+                k.dirtyAdd(c);
+            }
+            k.dirtyMul(x);
+            k.dirtyMul(x);
+            k.dirtyMul(x);
+            k.dirtyMul(x);
+
+            k.dirtyAdd(x * 2);
+            k.dirtyAdd(s2.v1 * 2);
+            k.dirtyAdd(s2.v2 * 2);
+            k.dirtyAdd(s2.v3 * 2);
+
+
+            // 修正value与(1+x)/(1-x)中的细微差别
+            vtMulInv.dirtyAdd(-1);
+            double vs1 = vtMulInv.v1;
+            double vs2 = vtMulInv.v2;
+
+            k.dirtyAdd(vs1);
+            k.dirtyAdd(vs2 + vs1 * vs1 * (-0.5));
+
+            k.v1 *= 65536;
+            k.v2 *= 65536;
+            k.v3 *= 65536;
+
+            return k;
+        }
     }
 }
