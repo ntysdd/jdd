@@ -149,6 +149,9 @@ public final strictfp class DoubleDouble {
         if (t.first == 0) {
             return new DoubleDouble(second);
         }
+        if (t.second == 0 && second + t.first == t.first) {
+            return new DoubleDouble(t.first, second);
+        }
         double t2 = second + t.second;
         return add(t.first, t2);
     }
@@ -676,6 +679,11 @@ public final strictfp class DoubleDouble {
             this.first = Double.NaN;
             this.second = Double.NaN;
         } else {
+            if (Double.isInfinite(first)) {
+                this.first = first;
+                this.second = 0;
+                return;
+            }
             if (first == 0 && second != 0) {
                 throw new AssertionError();
             }
