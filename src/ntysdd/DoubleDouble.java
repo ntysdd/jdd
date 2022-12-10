@@ -1202,38 +1202,21 @@ public final strictfp class DoubleDouble {
 
         public void sqrt() {
             double v1 = this.v1;
+            double v2 = this.v2;
+            double v3 = this.v3;
+
             double r1 = Math.sqrt(v1);
-            double h1 = fma(-r1, r1, v1);
-            DoubleDouble t = DoubleDouble.add(h1, this.v2);
-            Triple h = new Triple(t);
-            h.dirtyAdd(this.v3);
-            Triple h2 = new Triple(h);
-            h2.dirtyMul(h2);
+            DoubleDouble k = DoubleDouble.add(v2, v3).add(fma(r1, -r1, v1));
+            DoubleDouble r = k.mul(0.5).div(r1);
+            double k1 = k.getFirst();
+            double r2 = (k1 * k1) / (r1 * r1 * r1) * (-0.125);
 
-            h.dirtyDiv(r1);
-            h.v1 *= 0.5;
-            h.v2 *= 0.5;
-            h.v3 *= 0.5;
-
-            h2.dirtyDiv(r1);
-            h2.dirtyDiv(r1);
-            h2.dirtyDiv(r1);
-            h2.v1 *= -0.125;
-            h2.v2 *= -0.125;
-            h2.v3 *= -0.125;
-
-
-            this.v1 = r1;
-            this.v2 = 0;
+            DoubleDouble s1 = DoubleDouble.add(r1, r.first);
+            double c = r.second + r2;
+            this.v1 = s1.first;
+            this.v2 = s1.second;
             this.v3 = 0;
-
-            this.dirtyAdd(h.v1);
-            this.dirtyAdd(h.v2);
-            this.dirtyAdd(h.v3);
-
-            this.dirtyAdd(h2.v1);
-            this.dirtyAdd(h2.v2);
-            this.dirtyAdd(h2.v3);
+            dirtyAdd(c);
         }
 
         public BigDecimal toBigDecimal() {
