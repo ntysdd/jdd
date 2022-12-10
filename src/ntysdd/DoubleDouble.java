@@ -962,24 +962,21 @@ public final strictfp class DoubleDouble {
             result = Log.log1p(normalized - 1);
         } else {
             // normalized > 1.99 && normalized < 2
-            Triple reciprocal1p = Triple.reciprocal1p(normalized / 2 - 1);
-            double val = reciprocal1p.v1;
+            double reciprocal = 2 / normalized;
+            double val = reciprocal - 1;
             result = Log.log1p(val);
 
-            Triple vt = new Triple(DoubleDouble.add(val, 1));
-            vt.dirtyMul(value);
-            vt.dirtyAdd(-1);
-
-            double k = vt.v1;
-            Triple lk = new Triple(k);
+            double k = Triple.fma(reciprocal, value, -1.0);
             DoubleDouble k2 = DoubleDouble.mul(k, k);
-            lk.dirtyAdd(k2.first * (-0.5));
-            lk.dirtyAdd(k2.second * (-0.5));
+            Triple lk = new Triple(k2);
+            lk.v1 *= -0.5;
+            lk.v2 *= -0.5;
             lk.dirtyAdd(k * k * k / 3);
+            lk.dirtyAdd(k);
 
-            lk.dirtyAdd(-result.v1);
-            lk.dirtyAdd(-result.v2);
             lk.dirtyAdd(-result.v3);
+            lk.dirtyAdd(-result.v2);
+            lk.dirtyAdd(-result.v1);
 
             return new DoubleDouble(lk.v1, lk.v2);
         }
