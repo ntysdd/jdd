@@ -1039,6 +1039,64 @@ public final strictfp class DoubleDouble {
         }
 
         public void renormalize() {
+            final double ov1 = this.v1;
+            final double ov2 = this.v2;
+            final double ov3 = this.v3;
+            if (!(Double.isFinite(ov1) && Double.isFinite(ov2) && Double.isFinite(ov3))) {
+                if (Double.isNaN(ov1) || Double.isNaN(ov2) || Double.isNaN(ov3)) {
+                    this.v1 = Double.NaN;
+                    this.v2 = Double.NaN;
+                    this.v3 = Double.NaN;
+                    return;
+                }
+                if (Double.isInfinite(ov1) || Double.isInfinite(ov2) || Double.isInfinite(ov3)) {
+                    double res = ov1 + ov2 + ov3;
+                    if (Double.isNaN(res)) {
+                        this.v1 = Double.NaN;
+                        this.v2 = Double.NaN;
+                        this.v3 = Double.NaN;
+                        return;
+                    }
+                    this.v1 = res;
+                    this.v2 = 0;
+                    this.v3 = 0;
+                    return;
+                }
+                throw new AssertionError();
+            }
+            if (ov2 == 0 && ov3 == 0) {
+                if (Double.doubleToRawLongBits(ov2) == 0
+                        && Double.doubleToRawLongBits(ov3) == 0) {
+                    return;
+                }
+                this.v2 = 0;
+                this.v3 = 0;
+                return;
+            }
+            if (Math.abs(ov1) * 0.25 <= Math.abs(ov2)
+                    || Math.abs(ov2) * 0.25 <= Math.abs(ov3)
+            ) {
+                // 大小关系很奇怪
+                BigDecimal bd1 = new BigDecimal(ov1);
+                BigDecimal bd2 = new BigDecimal(ov2);
+                BigDecimal bd3 = new BigDecimal(ov3);
+                BigDecimal res = bd1.add(bd2).add(bd3);
+                double lv1 = res.doubleValue();
+                BigDecimal r = res.subtract(new BigDecimal(lv1));
+                double lv2 = r.doubleValue();
+                double lv3 = r.subtract(new BigDecimal(lv2)).doubleValue();
+                if (Double.isInfinite(lv1)) {
+                    this.v1 = lv1;
+                    this.v2 = 0;
+                    this.v3 = 0;
+                    return;
+                }
+                this.v1 = lv1;
+                this.v2 = lv2;
+                this.v3 = lv3;
+                return;
+            }
+
             DoubleDouble t = DoubleDouble.add(this.v2, this.v3);
             DoubleDouble t2 = DoubleDouble.add(this.v1, t.getFirst());
             DoubleDouble t3 = DoubleDouble.add(t2.getSecond(), t.getSecond());
