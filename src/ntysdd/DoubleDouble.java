@@ -966,8 +966,12 @@ public final strictfp class DoubleDouble {
             double val = reciprocal - 1;
             result = Log.log1p(val);
 
-            double k = Triple.fma(reciprocal, value, -1.0);
+            DoubleDouble ke = DoubleDouble.mul(reciprocal, value).add(-1.0);
+            double k = ke.first;
             DoubleDouble k2 = DoubleDouble.mul(k, k);
+            if (ke.second != 0) {
+                k2 = k2.add(2 * k * ke.second);
+            }
             Triple lk = new Triple(k2);
             lk.v1 *= -0.5;
             lk.v2 *= -0.5;
