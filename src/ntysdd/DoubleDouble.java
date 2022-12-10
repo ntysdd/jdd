@@ -937,6 +937,62 @@ public final strictfp class DoubleDouble {
         return v == x;
     }
 
+    public static DoubleDouble log(double value) {
+        if (!(value >= 0)) {
+            return DoubleDouble.valueOf(Double.NaN);
+        }
+        if (value == 0) {
+            return DoubleDouble.valueOf(Double.NEGATIVE_INFINITY);
+        }
+        if (value == Double.POSITIVE_INFINITY) {
+            return valueOf(Double.POSITIVE_INFINITY);
+        }
+        int exponent = Math.getExponent(value);
+        double normalized = Math.scalb(value, -exponent);
+        if (exponent == Double.MIN_EXPONENT - 1) {
+            // subnormal
+            int exponent2 = Math.getExponent(normalized);
+            exponent += exponent2;
+            normalized = Math.scalb(value, -exponent);
+        }
+
+        // 1.0 <= normalized && normalized < 2
+        Triple result;
+        if (normalized <= 1.99 || exponent != -1) {
+            result = Log.log1p(normalized - 1);
+        } else {
+            // normalized > 1.99 && normalized < 2
+            Triple reciprocal1p = Triple.reciprocal1p(normalized / 2 - 1);
+            double val = reciprocal1p.v1;
+            result = Log.log1p(val);
+
+            Triple vt = new Triple(DoubleDouble.add(val, 1));
+            vt.dirtyMul(value);
+            vt.dirtyAdd(-1);
+
+            double k = vt.v1;
+            Triple lk = new Triple(k);
+            DoubleDouble k2 = DoubleDouble.mul(k, k);
+            lk.dirtyAdd(k2.first * (-0.5));
+            lk.dirtyAdd(k2.second * (-0.5));
+            lk.dirtyAdd(k * k * k / 3);
+
+            lk.dirtyAdd(-result.v1);
+            lk.dirtyAdd(-result.v2);
+            lk.dirtyAdd(-result.v3);
+
+            return new DoubleDouble(lk.v1, lk.v2);
+        }
+        Triple log2 = new Triple(0.6931471805599453);
+        log2.v2 = 2.3190468138462996E-17;
+        log2.v3 = 5.707708438416212E-34;
+        log2.dirtyMul((double) exponent);
+        result.dirtyAdd(log2.v3);
+        result.dirtyAdd(log2.v2);
+        result.dirtyAdd(log2.v1);
+        return new DoubleDouble(result.v1, result.v2);
+    }
+
     private static class Triple {
         double v1;
         double v2;
