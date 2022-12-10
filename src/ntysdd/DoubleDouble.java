@@ -1112,6 +1112,12 @@ public final strictfp class DoubleDouble {
                 this.v1 = t1.getFirst();
                 return;
             }
+            if (t1.getFirst() == 0) {
+                this.v1 = this.v2;
+                this.v2 = this.v3;
+                this.v3 = 0;
+                return;
+            }
             DoubleDouble t2 = DoubleDouble.add(this.v2, t1.getSecond());
             double t3 = t2.getSecond() + this.v3;
             DoubleDouble t4 = DoubleDouble.add(t2.getFirst(), t3);
