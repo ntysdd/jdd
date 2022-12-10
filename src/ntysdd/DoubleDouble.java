@@ -146,6 +146,9 @@ public final strictfp class DoubleDouble {
         }
         double second = this.second;
         DoubleDouble t = add(first, rhs);
+        if (t.first == 0) {
+            return new DoubleDouble(second);
+        }
         double t2 = second + t.second;
         return add(t.first, t2);
     }
