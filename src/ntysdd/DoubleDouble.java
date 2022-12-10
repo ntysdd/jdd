@@ -1345,6 +1345,47 @@ public final strictfp class DoubleDouble {
             dirtyAdd(c);
         }
 
+        public void eighthRoot() {
+            double v1 = this.v1;
+            double v2 = this.v2;
+            double v3 = this.v3;
+
+            double r1 = Math.pow(v1, 0.125);
+            Triple h = new Triple(DoubleDouble.mul(r1, r1));
+            h.dirtyMul(r1);
+            h.dirtyMul(r1);
+            h.dirtyMul(h);
+
+            double r8 = h.v1;
+
+            Triple x7Inv = new Triple(1);
+            for (int i = 0; i < 7; i++) {
+                x7Inv.dirtyDiv(r1);
+            }
+
+            h.v1 = -h.v1;
+            h.v2 = -h.v2;
+            h.v3 = -h.v3;
+
+            h.dirtyAdd(v1);
+            h.dirtyAdd(v3);
+            h.dirtyAdd(v2);
+
+            DoubleDouble k = DoubleDouble.add(h.v1, h.v2);
+            x7Inv.dirtyMul(new Triple(k.mul(0.125)));
+            DoubleDouble r = DoubleDouble.add(x7Inv.v1, x7Inv.v2);
+
+            double k1 = k.getFirst();
+            double r2 = -7.0 / 128 * k1 * k1 / (r8 * r8) * r1;
+
+            DoubleDouble s1 = DoubleDouble.add(r1, r.first);
+            double c = r.second + r2;
+            this.v1 = s1.first;
+            this.v2 = s1.second;
+            this.v3 = 0;
+            dirtyAdd(c);
+        }
+
         public BigDecimal toBigDecimal() {
             return new BigDecimal(v1)
                     .add(new BigDecimal(v2))
