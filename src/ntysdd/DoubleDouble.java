@@ -1027,6 +1027,15 @@ public final strictfp class DoubleDouble {
             this.v3 = x.v3;
         }
 
+        public void renormalize() {
+            DoubleDouble t = DoubleDouble.add(this.v2, this.v3);
+            DoubleDouble t2 = DoubleDouble.add(this.v1, t.getFirst());
+            DoubleDouble t3 = DoubleDouble.add(t2.getSecond(), t.getSecond());
+            this.v1 = t2.getFirst();
+            this.v2 = t3.getFirst();
+            this.v3 = t3.getSecond();
+        }
+
         private static double fma(double a, double b, double c) {
             if (FMA_METHOD != null) {
                 try {
@@ -1120,6 +1129,21 @@ public final strictfp class DoubleDouble {
                 this.v1 = t.getFirst();
                 this.v2 = t.getSecond();
                 this.v3 = 0;
+                return;
+            }
+            if (this.v3 == 0) {
+                DoubleDouble t = DoubleDouble.add(x, this.v1);
+                if (t.getFirst() == 0) {
+                    this.v1 = this.v2;
+                    this.v2 = 0;
+                    this.v3 = 0;
+                    return;
+                }
+                DoubleDouble t2 = DoubleDouble.add(t.getSecond(), this.v2);
+                this.v1 = t.getFirst();
+                this.v2 = t2.getFirst();
+                this.v3 = t2.getSecond();
+                renormalize();
                 return;
             }
             DoubleDouble t1 = DoubleDouble.add(x, this.v1);
