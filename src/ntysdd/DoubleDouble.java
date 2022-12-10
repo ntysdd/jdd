@@ -1277,9 +1277,10 @@ public final strictfp class DoubleDouble {
             for (int i = 0; i < 16; i++) {
                 vt.sqrt();
             }
-            vt.dirtyAdd(-1);
-            double value1 = vt.v1;
-            vt.dirtyAdd(1);
+            Triple vtc = new Triple(vt);
+            vtc.dirtyAdd(-1);
+            double value1 = vtc.v1;
+
             double x = value1 / (2 + value1);
 
             Triple tInv = new Triple(DoubleDouble.add(1, -x));
@@ -1308,9 +1309,9 @@ public final strictfp class DoubleDouble {
             k.dirtyMul(x);
 
             k.dirtyAdd(x * 2);
-            k.dirtyAdd(s2.v1 * 2);
-            k.dirtyAdd(s2.v2 * 2);
             k.dirtyAdd(s2.v3 * 2);
+            k.dirtyAdd(s2.v2 * 2);
+            k.dirtyAdd(s2.v1 * 2);
 
 
             // 修正value与(1+x)/(1-x)中的细微差别
