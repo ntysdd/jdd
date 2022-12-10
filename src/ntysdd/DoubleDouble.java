@@ -1010,6 +1010,18 @@ public final strictfp class DoubleDouble {
         double v2;
         double v3;
 
+        public double getV1() {
+            return v1;
+        }
+
+        public double getV2() {
+            return v2;
+        }
+
+        public double getV3() {
+            return v3;
+        }
+
         public Triple() {
         }
 
