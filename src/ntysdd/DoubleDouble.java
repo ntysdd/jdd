@@ -1107,6 +1107,21 @@ public final strictfp class DoubleDouble {
         }
 
         public void dirtyAdd(double x) {
+            if (this.v1 == 0) {
+                // assert this.v2 == 0 && this.v3 == 0
+                this.v1 = x;
+                this.v2 = 0;
+                this.v3 = 0;
+                return;
+            }
+            if (this.v2 == 0) {
+                // assert this.v3 == 0
+                DoubleDouble t = DoubleDouble.add(this.v1, x);
+                this.v1 = t.getFirst();
+                this.v2 = t.getSecond();
+                this.v3 = 0;
+                return;
+            }
             DoubleDouble t1 = DoubleDouble.add(x, this.v1);
             if (t1.getSecond() == 0 && Math.abs(t1.getFirst()) >= Math.abs(this.v1)) {
                 this.v1 = t1.getFirst();
