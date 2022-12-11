@@ -1224,7 +1224,9 @@ public final strictfp class DoubleDouble {
                 res.v2 = sum2;
                 res.v3 = sum3;
 
-                res.renormalize();
+                if (res.v2 + res.v3 != res.v2) {
+                    res.renormalize();
+                }
             }
             return res;
         }
@@ -1292,7 +1294,9 @@ public final strictfp class DoubleDouble {
                 this.v1 = t.getFirst();
                 this.v2 = t2.getFirst();
                 this.v3 = t2.getSecond();
-                renormalize();
+                if (this.v1 + this.v2 != this.v1) {
+                    renormalize();
+                }
                 return;
             }
             DoubleDouble t1 = DoubleDouble.add(x, this.v1);
