@@ -1341,16 +1341,19 @@ public final strictfp class DoubleDouble {
 
         // 计算1/(1+x)-1
         public static Triple reciprocal1p(double x) {
-            double r1 = Math.expm1(-Math.log1p(x));
+            double r1;
+            if (Math.abs(x) > 1E-5) {
+                r1 = Math.expm1(-Math.log1p(x));
+            } else {
+                r1 = x * (-1 + x * (1 + x * (-1 + x * 0.999999999999999)));
+            }
             DoubleDouble r1p1 = DoubleDouble.add(1.0, r1);
-            DoubleDouble xp1 = DoubleDouble.add(1.0, x);
-            Triple h = new Triple(r1p1);
-            h.dirtyMul(new Triple(xp1));
-            h.dirtyAdd(-1);
+            DoubleDouble h = DoubleDouble.add(r1, x)
+                    .add(DoubleDouble.mul(r1, x));
 
-            double h2 = h.v1 * h.v1;
+            double h2 = h.getFirst() * h.getFirst();
 
-            DoubleDouble r = r1p1.mul(DoubleDouble.add(-h.v1, -h.v2));
+            DoubleDouble r = r1p1.mul(h.neg());
 
             double r2 = h2 * r1p1.getFirst();
 
