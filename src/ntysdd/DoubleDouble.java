@@ -260,7 +260,7 @@ public final strictfp class DoubleDouble {
         c += s1.v2 * s2.v1;
         c += s1.v2 * s2.v2;
         if (shift == 0) {
-            return new DoubleDouble(lhs * rhs, c);
+            return DoubleDouble.add(lhs * rhs, c);
         } else {
             double scale;
             if (shift == 53) {
@@ -268,7 +268,7 @@ public final strictfp class DoubleDouble {
             } else {
                 scale = StrictMath.pow(2, shift);
             }
-            return new DoubleDouble(lhs * rhs * scale,
+            return DoubleDouble.add(lhs * rhs * scale,
                     c * scale);
         }
     }
