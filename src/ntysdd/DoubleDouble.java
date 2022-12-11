@@ -961,6 +961,16 @@ public final strictfp class DoubleDouble {
         return sqrt(DoubleDouble.valueOf(value));
     }
 
+    public static DoubleDouble rsqrt(long value) {
+        if (canLongBeConvertedToDoubleExactly(value)) {
+            return rsqrt((double) value);
+        }
+        if (value < 0) {
+            return DoubleDouble.valueOf(Double.NaN);
+        }
+        return rsqrt(DoubleDouble.valueOf(value));
+    }
+
     public static DoubleDouble cbrt(long value) {
         if (canLongBeConvertedToDoubleExactly(value)) {
             return cbrt((double) value);
