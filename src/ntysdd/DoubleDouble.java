@@ -1351,6 +1351,32 @@ public final strictfp class DoubleDouble {
             dirtyAdd(c);
         }
 
+        public void rsqrt() {
+            double v1 = this.v1;
+            double v2 = this.v2;
+            double v3 = this.v3;
+
+            double r1 = 1.0 / Math.sqrt(v1);
+            Triple n1 = mul(r1, -r1, v1);
+            n1.dirtyAdd(1);
+            n1.dirtyDiv(r1);
+            n1.dirtyDiv(r1);
+            DoubleDouble k = DoubleDouble.add(n1.v1, n1.v2)
+                    .sub(DoubleDouble.add(v2, v3));
+
+            DoubleDouble r12 = DoubleDouble.mul(r1, r1);
+            DoubleDouble r = k.mul(0.5).mul(r1).mul(r12);
+            double k1 = k.getFirst();
+            double r2 = 3.0 / 8 * (k1 * k1) * (r12.getFirst() * r12.getFirst() * r1);
+
+            DoubleDouble s1 = DoubleDouble.add(r1, r.first);
+            double c = r.second + r2;
+            this.v1 = s1.first;
+            this.v2 = s1.second;
+            this.v3 = 0;
+            dirtyAdd(c);
+        }
+
         public void fourthRoot() {
             if (true) {
                 // this seems faster
