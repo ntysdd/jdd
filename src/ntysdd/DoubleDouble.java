@@ -1040,7 +1040,7 @@ public final strictfp class DoubleDouble {
         public Triple(DoubleDouble x) {
             this.v1 = x.first;
             this.v2 = x.second;
-            if (Double.isNaN(x.first)) {
+            if (Double.isNaN(x.first) || Double.isNaN(x.second) ) {
                 this.v1 = Double.NaN;
                 this.v2 = Double.NaN;
                 this.v3 = Double.NaN;
