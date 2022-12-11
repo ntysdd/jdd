@@ -1352,6 +1352,12 @@ public final strictfp class DoubleDouble {
         }
 
         public void fourthRoot() {
+            if (true) {
+                // this seems faster
+                this.sqrt();
+                this.sqrt();
+                return;
+            }
             double v1 = this.v1;
             double v2 = this.v2;
             double v3 = this.v3;
@@ -1384,6 +1390,13 @@ public final strictfp class DoubleDouble {
         }
 
         public void eighthRoot() {
+            if (true) {
+                // this seems faster
+                this.sqrt();
+                this.sqrt();
+                this.sqrt();
+                return;
+            }
             double v1 = this.v1;
             double v2 = this.v2;
             double v3 = this.v3;
