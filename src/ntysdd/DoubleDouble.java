@@ -1345,11 +1345,44 @@ public final strictfp class DoubleDouble {
             dirtyAdd(c);
         }
 
+        public void fourthRoot() {
+            double v1 = this.v1;
+            double v2 = this.v2;
+            double v3 = this.v3;
+
+            // for Java 8 sqrt(sqrt(v1)) may be faster
+            double r1 = Math.pow(v1, 0.25);
+            // 计算pow(r1, 4)
+            DoubleDouble rr = DoubleDouble.mul(r1, r1);
+            Triple rr4 = new Triple(rr);
+            rr4.dirtyMul(r1);
+
+            DoubleDouble r3 = DoubleDouble.add(rr4.v1, rr4.v2);
+            rr4.dirtyMul(r1);
+
+            rr4.dirtyAdd(-v1);
+
+            DoubleDouble k = DoubleDouble.add(v2, v3)
+                    .sub(DoubleDouble.add(rr4.v1, rr4.v2));
+            DoubleDouble r = k.mul(0.25).div(r3);
+
+            double k1 = k.getFirst();
+            double r2 = -3.0 / 32 * (k1 * k1) / r3.getFirst() / v1;
+
+            DoubleDouble s1 = DoubleDouble.add(r1, r.first);
+            double c = r.second + r2;
+            this.v1 = s1.first;
+            this.v2 = s1.second;
+            this.v3 = 0;
+            dirtyAdd(c);
+        }
+
         public void eighthRoot() {
             double v1 = this.v1;
             double v2 = this.v2;
             double v3 = this.v3;
 
+            // for Java 8 sqrt(sqrt(sqrt(v1))) may be faster
             double r1 = Math.pow(v1, 0.125);
             // 计算pow(r1, 8)
             DoubleDouble rr = DoubleDouble.mul(r1, r1);
