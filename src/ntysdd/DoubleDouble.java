@@ -643,6 +643,25 @@ public final strictfp class DoubleDouble {
         return eps.add(eps2).add(f0);
     }
 
+    public static DoubleDouble rsqrt(DoubleDouble value) {
+        if (value.second == 0 || Double.isNaN(value.second)) {
+            return rsqrt(value.first);
+        }
+        int exponent = Math.getExponent(value.first);
+        if (exponent % 2 != 0) {
+            exponent++;
+        }
+        double normalized1 = Math.scalb(value.first, -exponent);
+        double normalized2 = Math.scalb(value.second, -exponent);
+
+        Triple v = new Triple(DoubleDouble.add(normalized1, normalized2));
+        v.rsqrt();
+
+        v.v1 = Math.scalb(v.v1, -exponent / 2);
+        v.v2 = Math.scalb(v.v2, -exponent / 2);
+        return DoubleDouble.add(v.v1, v.v2);
+    }
+
     public static DoubleDouble rsqrt(double value) {
         if (!(value >= 0)) {
             return valueOf(Double.NaN);
