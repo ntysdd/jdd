@@ -2,6 +2,7 @@ package ntysdd;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -27,7 +28,7 @@ public final strictfp class DoubleDouble {
     private final double first;
     private final double second;
     // 用来缓存String表示
-    private String toStringCache;
+    private WeakReference<String> toStringCache;
 
     private static final MethodHandle FMA_METHOD;
 
@@ -774,22 +775,31 @@ public final strictfp class DoubleDouble {
      */
     @Override
     public String toString() {
-        String toStringCache = this.toStringCache;
-        if (toStringCache != null) {
-            return toStringCache;
+        WeakReference<String> localRef = this.toStringCache;
+        if (localRef != null) {
+            String cachedString = localRef.get();
+            if (cachedString != null) {
+                return cachedString;
+            }
         }
         if (first == 0 && second == 0) {
             if (Math.copySign(1, first) < 0) {
-                return this.toStringCache = "-0";
+                this.toStringCache = new WeakReference<>("-0");
+                return "-0";
             } else {
-                return this.toStringCache = "0";
+                this.toStringCache = new WeakReference<>("0");
+                return "0";
             }
         }
         if (Double.isNaN(first) || Double.isNaN(second)) {
-            return this.toStringCache = Double.toString(Double.NaN);
+            String str = Double.toString(Double.NaN);
+            this.toStringCache = new WeakReference<>(str);
+            return str;
         }
         if (Double.isInfinite(first)) {
-            return this.toStringCache = Double.toString(first);
+            String str = Double.toString(first);
+            this.toStringCache = new WeakReference<>(str);
+            return str;
         }
         if (Double.isInfinite(second)) {
             throw new AssertionError();
@@ -797,12 +807,16 @@ public final strictfp class DoubleDouble {
         BigDecimal bd = new BigDecimal(first).add(new BigDecimal(second));
         long longValue = bd.longValue();
         if (bd.compareTo(BigDecimal.valueOf(longValue)) == 0) {
-            return this.toStringCache = Long.toString(longValue);
+            String str = Long.toString(longValue);
+            this.toStringCache = new WeakReference<>(str);
+            return str;
         }
         MathContext mathContext = MathContext.DECIMAL128;
-        return this.toStringCache = bd.round(mathContext)
+        String str = bd.round(mathContext)
                 .stripTrailingZeros()
                 .toString();
+        this.toStringCache = new WeakReference<>(str);
+        return str;
     }
 
     /**
