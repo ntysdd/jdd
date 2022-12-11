@@ -1280,18 +1280,19 @@ public final strictfp class DoubleDouble {
             Triple h = new Triple(r1p1);
             h.dirtyMul(new Triple(xp1));
             h.dirtyAdd(-1);
-            h.v1 *= -1;
-            h.v2 *= -1;
-            h.v3 *= -1;
 
             double h2 = h.v1 * h.v1;
 
-            h.dirtyMul(new Triple(r1p1));
+            DoubleDouble r = r1p1.mul(DoubleDouble.add(-h.v1, -h.v2));
 
-            h.dirtyAdd(h2 * (r1 + 1));
-            h.dirtyAdd(r1);
+            double r2 = h2 * r1p1.getFirst();
 
-            return h;
+            DoubleDouble s1 = DoubleDouble.add(r1, r.first);
+            double c = r.second + r2;
+            Triple res = new Triple(s1);
+            res.dirtyAdd(c);
+
+            return res;
         }
 
         public void dirtyMul(Triple rhs) {
