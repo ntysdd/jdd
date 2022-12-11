@@ -96,7 +96,10 @@ public final strictfp class DoubleDouble {
         if (Double.isInfinite(f)) {
             return new DoubleDouble(f);
         }
-        if (Math.abs(lhs) >= Math.abs(rhs)) {
+        long r1 = Double.doubleToRawLongBits(lhs);
+        long r2 = Double.doubleToRawLongBits(rhs);
+
+        if ((r1 & Long.MAX_VALUE) >= (r2 & Long.MAX_VALUE)) {
             return new DoubleDouble(f, rhs - (f - lhs));
         } else {
             return new DoubleDouble(f, lhs - (f - rhs));
