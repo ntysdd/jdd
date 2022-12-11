@@ -679,12 +679,16 @@ public final strictfp class DoubleDouble {
         }
         double normalized = Math.scalb(value, -exponent);
 
-        Triple v = new Triple(normalized);
-        v.rsqrt();
+        double r1 = 1.0 / Math.sqrt(normalized);
+        Triple triple = Triple.mul(r1, r1, -normalized);
+        triple.dirtyAdd(1);
+        DoubleDouble k = DoubleDouble.add(triple.v1, triple.v2);
+        double k1 = k.first;
 
-        v.v1 = Math.scalb(v.v1, -exponent / 2);
-        v.v2 = Math.scalb(v.v2, -exponent / 2);
-        return DoubleDouble.add(v.v1, v.v2);
+        DoubleDouble res = k.mul(r1 * 0.5)
+                .add(DoubleDouble.add(r1, 3.0 / 8 * k1 * k1 * r1));
+
+        return res.mul(Math.scalb(1.0, -exponent / 2));
     }
 
     public static DoubleDouble cbrt(DoubleDouble value) {
