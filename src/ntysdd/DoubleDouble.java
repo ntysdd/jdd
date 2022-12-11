@@ -1242,21 +1242,26 @@ public final strictfp class DoubleDouble {
         }
 
         public void dirtyMul(double m) {
-            DoubleDouble d1 = DoubleDouble.mul(this.v1, m);
-            DoubleDouble d2 = DoubleDouble.mul(this.v2, m);
-            DoubleDouble d3 = DoubleDouble.mul(this.v3, m);
-            double[] v = {
-                    d1.getFirst(),
-                    d2.getFirst(),
-                    d1.getSecond(),
-                    d2.getSecond(),
-                    d3.getFirst(),
-                    d3.getSecond()
-            };
-            Triple sum = sum(v);
-            this.v1 = sum.v1;
-            this.v2 = sum.v2;
-            this.v3 = sum.v3;
+            double v1 = this.v1;
+            double v2 = this.v2;
+            double v3 = this.v3;
+
+            DoubleDouble t1 = DoubleDouble.mul(m, v1);
+            DoubleDouble t2 = DoubleDouble.mul(m, v2);
+            double t3 = m * v3;
+
+            DoubleDouble t4 = DoubleDouble.add(t1.getSecond(), t2.getFirst());
+            double t5 = t2.getSecond() + t3;
+            double t6 = t5 + t4.getSecond();
+
+            DoubleDouble t7 = DoubleDouble.add(t4.getFirst(), t6);
+
+            this.v1 = t1.getFirst();
+            this.v2 = t7.getFirst();
+            this.v3 = t7.getSecond();
+            if (this.v1 + this.v2 != this.v1) {
+                this.renormalize();
+            }
         }
 
         public void dirtyAdd(double x) {
