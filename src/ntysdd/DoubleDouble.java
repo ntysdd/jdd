@@ -1364,10 +1364,9 @@ public final strictfp class DoubleDouble {
             DoubleDouble k = DoubleDouble.add(n1.v1, n1.v2)
                     .sub(DoubleDouble.add(v2, v3));
 
-            DoubleDouble r12 = DoubleDouble.mul(r1, r1);
-            DoubleDouble r = k.mul(0.5).mul(r1).mul(r12);
+            DoubleDouble r = k.mul(r1).mul(r1).mul(r1 * 0.5);
             double k1 = k.getFirst();
-            double r2 = 3.0 / 8 * (k1 * k1) * (r12.getFirst() * r12.getFirst() * r1);
+            double r2 = 3.0 / 8 * (k1 * k1) * ((r1 * r1) * (r1 * r1) * r1);
 
             DoubleDouble s1 = DoubleDouble.add(r1, r.first);
             double c = r.second + r2;
