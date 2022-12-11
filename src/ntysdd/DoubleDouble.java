@@ -1351,32 +1351,25 @@ public final strictfp class DoubleDouble {
             double v3 = this.v3;
 
             double r1 = Math.pow(v1, 0.125);
-            Triple h = new Triple(DoubleDouble.mul(r1, r1));
-            h.dirtyMul(r1);
-            h.dirtyMul(r1);
-            h.dirtyMul(h);
+            // 计算pow(r1, 8)
+            DoubleDouble rr = DoubleDouble.mul(r1, r1);
+            Triple rr4 = new Triple(rr);
+            rr4.dirtyMul(r1);
+            rr4.dirtyMul(r1);
 
-            double r8 = h.v1;
+            rr4.dirtyMul(rr4);
 
-            Triple x7Inv = new Triple(1);
-            for (int i = 0; i < 7; i++) {
-                x7Inv.dirtyDiv(r1);
-            }
+            DoubleDouble r8 = DoubleDouble.add(rr4.v1, rr4.v2);
 
-            h.v1 = -h.v1;
-            h.v2 = -h.v2;
-            h.v3 = -h.v3;
+            rr4.dirtyAdd(-v1);
 
-            h.dirtyAdd(v1);
-            h.dirtyAdd(v3);
-            h.dirtyAdd(v2);
-
-            DoubleDouble k = DoubleDouble.add(h.v1, h.v2);
-            x7Inv.dirtyMul(new Triple(k.mul(0.125)));
-            DoubleDouble r = DoubleDouble.add(x7Inv.v1, x7Inv.v2);
+            DoubleDouble k = DoubleDouble.add(v2, v3)
+                    .sub(DoubleDouble.add(rr4.v1, rr4.v2));
+            DoubleDouble r = k.mul(0.125).mul(r1)
+                    .div(r8);
 
             double k1 = k.getFirst();
-            double r2 = -7.0 / 128 * k1 * k1 / (r8 * r8) * r1;
+            double r2 = -7.0 / 128 * (k1 * k1) / (r8.getFirst() * r8.getFirst()) * r1;
 
             DoubleDouble s1 = DoubleDouble.add(r1, r.first);
             double c = r.second + r2;
