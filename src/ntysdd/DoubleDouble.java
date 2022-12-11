@@ -1165,6 +1165,8 @@ public final strictfp class DoubleDouble {
                 res.v1 = sum1;
                 res.v2 = sum2;
                 res.v3 = sum3;
+
+                res.renormalize();
             }
             return res;
         }
